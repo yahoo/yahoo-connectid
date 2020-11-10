@@ -1,0 +1,9 @@
+version: 4
+jobs:
+    main:
+        requires: [ ~pr, ~commit ]
+        template: nodejs/lib@stable
+        steps:
+            - posttest: |
+                echo "Copying lcov files to artifacts"
+                cp -r coverage ${SD_ROOT_DIR}/artifacts

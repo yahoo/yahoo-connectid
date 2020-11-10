@@ -1,0 +1,28 @@
+{
+  "presets": [
+  [
+    "@babel/preset-env",
+    {
+      "debug": true,
+      "useBuiltIns": "usage",
+      "corejs": "3",
+      "targets": {
+        "browsers": [
+          "> 1%",
+          "ie >= 11",
+          "not dead",
+          "not OperaMini all"
+        ]
+      }
+    }
+  ]
+],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "regenerator": true
+      }
+    ]
+  ]
+}

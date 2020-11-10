@@ -1,0 +1,95 @@
+<!-- Copyright Verizon Media, Licensed under the terms of the MIT license. See LICENSE file in project root for terms. -->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Verizon Media ConnectID JS Demo Page</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <style>
+        html, body {
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        th {
+            text-align: start;
+        }
+
+        th, td {
+            border-width: 0 0 1px 0;
+            border-style: solid;
+            border-color: black;
+        }
+
+        h1 {
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            margin: 0;
+        }
+
+        .content {
+            padding: 20px 40px;
+        }
+
+        .param {
+            margin: 3px 0 3px 30px;
+        }
+
+        .param-name {
+            width: 150px;
+            display: inline-block;
+        }
+
+    </style>
+</head>
+<body>
+<div id="root"></div>
+<h1>Verizon Media ConnectID JS Module Demo</h1>
+
+<div class="content">
+    <div>connectId.getIds({</div>
+    <div class="param">
+        <span class="param-name">pixelId:</span>
+        <input id="pixelId"/>
+    </div>
+    <div class="param">
+        <span class="param-name">email:</span>
+        <input id="email"/>
+    </div>
+    <div class="param">
+        <span class="param-name">gdpr:</span>
+        <select id="gdpr" value="0">
+            <option value="0">false</option>
+            <option value="1">true</option>
+        </select>
+    </div>
+    <div class="param">
+        <span class="param-name">gdprConsent:</span>
+        <input id="gdprConsent"/>
+    </div>
+
+    <div>}, response => {</div>
+    <div class="param">
+        <span>console.log(response);</span>
+        <div id="getIdsResponse"></div>
+    </div>
+    <div>})</div>
+
+    <button id="emailButton">Call function</button>
+    <button id="reset">Reset</button>
+
+    <h3>All Local Storage Data</h3>
+    <table id="localStorageData">
+        <tbody>
+        </tbody>
+    </table>
+    </table>
+</div>
+
+</body>
+</html>

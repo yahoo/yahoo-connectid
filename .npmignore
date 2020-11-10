@@ -1,0 +1,11 @@
+coverage/
+docs/
+node_modules/
+src/**/*.spec.js
+src/demo/*
+dist/demo.*
+.babelrc
+karma.conf.js
+webpack.config.js
+screwdriver.yaml
+sd.allow
