@@ -45,15 +45,15 @@ sync.syncHashedEmail = ({
   }
 
   const userState = state.getUserState(hashedEmail);
-  if (userState.connectId) {
-    const wasSyncedRecently = isRecentTimestamp(userState.connectId.lastUpdated);
+  if (userState.connectid) {
+    const wasSyncedRecently = isRecentTimestamp(userState.connectid.lastUpdated);
     if (wasSyncedRecently) {
       // don't sync if hashedEmail was already synced recently
       return;
     }
   }
 
-  // call UPS to get connectId
+  // call UPS to get connectid
   const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
   const data = {
     he: hashedEmail,
@@ -64,11 +64,11 @@ sync.syncHashedEmail = ({
 
   api.sendRequest(url, data, response => {
     if (response) {
-      // store connectId in local state
+      // store connectid in local state
       state.setUserState(hashedEmail, {
         ...userState,
-        connectId: {
-          value: response.vmuid,
+        connectid: {
+          value: response.vmuid || response.connectid,
           lastUpdated: new Date().toISOString(),
         },
       });

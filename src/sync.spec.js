@@ -28,7 +28,7 @@ describe('sync', () => {
   });
 
   describe('syncHashedEmail', () => {
-    it('should sync connectId', () => {
+    it('should sync connectid', () => {
       spyOn(api, 'sendRequest');
       sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc'});
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
@@ -36,11 +36,11 @@ describe('sync', () => {
       }, jasmine.anything());
     });
 
-    it('should not sync connectId if already synced recently', () => {
+    it('should not sync connectid if already synced recently', () => {
       const mockState = {
         abc: {
-          connectId: {
-            value: 'abc_connectId',
+          connectid: {
+            value: 'abc_connectid',
             lastUpdated: new Date(now.getTime() - 71 * 60 * 60 * 1000).toISOString()
           }
         },
@@ -53,11 +53,11 @@ describe('sync', () => {
       expect(api.sendRequest).not.toHaveBeenCalled();
     });
 
-    it('should sync connectId if already synced, but not recently', () => {
+    it('should sync connectid if already synced, but not recently', () => {
       const mockState = {
         abc: {
-          connectId: {
-            value: 'abc_connectId',
+          connectid: {
+            value: 'abc_connectid',
             lastUpdated: new Date(now.getTime() - 16 * 24 * 60 * 60 * 1000).toISOString()
           }
         },
@@ -69,25 +69,43 @@ describe('sync', () => {
       expect(api.sendRequest).toHaveBeenCalled();
     });
 
-    it('should store connectId in state', () => {
+    it('should store connectid (returned as connectid) in state', () => {
       spyOn(state, 'setUserState');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
-        callback({vmuid: 'fake_connectId'});
+        callback({connectid: 'fake_connectid'});
       });
 
       sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc'});
       expect(state.setUserState).toHaveBeenCalledWith(
         'abc',
         {
-          connectId: {
-            value: 'fake_connectId',
+          connectid: {
+            value: 'fake_connectid',
             lastUpdated: now.toISOString()
           }
         }
       );
     });
 
-    it('should not update state if no connectId provided', () => {
+    it('should store connectid (returned as vmuid) in state', () => {
+      spyOn(state, 'setUserState');
+      spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
+        callback({vmuid: 'fake_connectid'});
+      });
+
+      sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc'});
+      expect(state.setUserState).toHaveBeenCalledWith(
+        'abc',
+        {
+          connectid: {
+            value: 'fake_connectid',
+            lastUpdated: now.toISOString()
+          }
+        }
+      );
+    });
+
+    it('should not update state if no connectid provided', () => {
       spyOn(state, 'setUserState');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
         callback();

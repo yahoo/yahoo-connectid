@@ -1,7 +1,7 @@
 /* Copyright Verizon Media, Licensed under the terms of the MIT license. See LICENSE file in project root for terms. */
 
 import $ from 'jquery';
-import connectId from '../connectid';
+import connectid from '../connectid';
 
 let localStorageDataJson = '';
 
@@ -18,7 +18,7 @@ const renderLocalStorageData = () => {
   const header = data
     ? `<tr>
     <th>Hashed Email</th>
-    <th>connectId</th>
+    <th>connectid</th>
     <th>Last Updated</th>
   </tr>`
     : 'no stored data';
@@ -28,8 +28,8 @@ const renderLocalStorageData = () => {
       const value = data[key];
       return `<tr>
       <td>${key}</td>
-      <td>${value.connectId.value}</td>
-      <td>${value.connectId.lastUpdated}</td>
+      <td>${value.connectid.value}</td>
+      <td>${value.connectid.lastUpdated}</td>
     </tr>`;
     }).join('')
     : '';
@@ -46,7 +46,7 @@ const callGetIds = () => {
   document.getElementById('gdprConsent').value = demoState.gdprConsent || '';
 
   // get ids from verizon-media-connectid module
-  connectId.getIds(
+  connectid.getIds(
     demoState,
     ids => {
       // display results

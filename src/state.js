@@ -33,7 +33,7 @@ const setState = state => {
  * Read state for a specified user based on their hashed email
  *
  * @param {string} hashedEmail
- * @returns {{connectId: *}}
+ * @returns {{connectid: *}}
  */
 const getUserState = hashedEmail => {
   return {

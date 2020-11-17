@@ -20,7 +20,7 @@ describe('state', () => {
     it('should return stored state for specified user', () => {
       const mockState = {
         abc: {
-          connectId: 'abc_connectId'
+          connectid: 'abc_connectid'
         },
       };
       localStorage.setItem('vm-connectid', JSON.stringify(mockState));

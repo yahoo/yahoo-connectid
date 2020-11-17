@@ -58,8 +58,8 @@ const getIds = (
     // return locally stored ids for hashed email.  This responds immediately.  It does not wait for the sync
     // process to complete.
     const userState = state.getUserState(hashedEmail);
-    const connectId = userState.connectId ? userState.connectId.value : undefined;
-    callback(connectId ? {connectId} : {});
+    const connectid = userState.connectid ? userState.connectid.value : undefined;
+    callback(connectid ? {connectid} : {});
   });
 };
 

@@ -35,14 +35,14 @@ describe('api', () => {
 
     it('should pass API response to callback', done => {
       api.sendRequest('mock url', {he: 'abc'}, response => {
-        expect(response.connectId).toBe('fake_ connectId');
+        expect(response.connectid).toBe('fake_ connectid');
         done();
       });
 
       requests[0].respond(
         200,
         {"Content-Type": "application/json"},
-        '{"connectId": "fake_ connectId"}'
+        '{"connectid": "fake_ connectid"}'
       );
     });
 
