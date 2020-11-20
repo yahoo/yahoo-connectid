@@ -1,15 +1,29 @@
-# Verizon Media Unified ID JS Module
+# Verizon Media ConnectID JS Module
 
 ## Description
 
-The Verizon Media Unified ID is designed to enable ad tech platforms to recognize and match users 
-consistently across the open web. The Verizon Media Unified ID is built on top of Verizon Media's
- robust and proprietary ID Graph, delivering a higher find rate of audiences on publishers' sites
-  user targeting that respects privacy.
+The Verizon Media ConnectID is designed to enable ad tech platforms to recognize and match users consistently across the open web. The Verizon Media ConnectID is built on top of Verizon Media's
+robust and proprietary ID Graph, delivering a higher find rate of audiences on publishers' sites user targeting.
 
-The Verizon Media Unified ID honors privacy choices from our own Privacy Dashboard, as well as global privacy acts.
+## Terms of Use
 
-This module provides the VMUID (Verizon Media Unified ID) associated with a user's email address.
+All use of the Verizon Media ConnectID, associated APIs, code, and scripts, and data are subject to the Verizon Media Master Terms and Conditions here:
+
+https://www.verizonmedia.com/policies/us/en/verizonmedia/terms/advertising/masterterms/masterterms-322/index.html
+
+And Verizon Media ConnectID Addendum here:
+
+https://yahoo.secure.force.com/tnc/tc?id=VMID-Addendum-v1
+
+Advertiser uses are subject to the Verizon Media Pixel and Custom Audience Policy here:
+
+https://www.verizonmedia.com/policies/xw/en/verizonmedia/privacy/enterprise/pixelandcustomaudience/index.html
+
+ALL INTEGRATIONS MUST BE APPROVED AND REGISTERED prior to use by the Verizon Media Account team. Contact your account manager for more information.
+
+
+
+
 
 ## Prerequisites
 
@@ -27,14 +41,14 @@ method are as follows.
 
 1. Ad tag retrieves an email (raw or hashed) from the page.
 2. Ad tag passes email to the <code>getIds</code> method in this module.  
-3. The getIds method returns the locally cached VMUID associated with that email (if available).  Local Storage 
+3. The getIds method returns the locally cached Verizon Media ConnectID associated with that email (if available).  Local Storage 
 is used for caching these IDs
-4. The getIds method then calls Verizon Media's Pixel Server to retrieve the VMUID if it is not available locally.
+4. The getIds method then calls Verizon Media's Pixel Server to retrieve the Verizon Media ConnectID if it is not available locally.
 
 If a raw email is provided, a SHA-256 hash of the email will be used for syncing and local storage.  A raw email 
 is identified by the existence of an "@" character in the value.
 
-The Local Storage key used to cache the VMCID is "vm-connectid"
+The Local Storage key used to cache the ConnectID is "vm-connectid"
 
 ## Integration
 
@@ -51,7 +65,7 @@ how to import the module.
  ```
 import connectId from 'npm-module-name-tbd';
 
-// code running on first party domain ...
+// code running on a first party domain ...
 
 const params = {
   pixelId: ..., // publisher specific pixel id
@@ -61,8 +75,8 @@ const params = {
 };
 
 connectId.getIds(params, ids => {
-  // ids is a map of id type to value, for example {vmuid: 'abc123'}
-  // pass ids.vmuid in request to ad server
+  // ids is a map of id type to value, for example {connectid: 'abc123'}
+  // pass ids.connectid in request to ad server
 });
 ```
 
