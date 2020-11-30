@@ -33,8 +33,5 @@
     "webpack-delete-after-emit": "^1.0.5",
     "webpack-dev-server": "^3.11.0",
     "webpack-karma-jasmine": "^4.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npm.vzbuilders.com:4443/npm-registry/"
   }
 }
