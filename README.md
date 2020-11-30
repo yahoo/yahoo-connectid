@@ -31,7 +31,7 @@ Node.js
 
 ## Installation
 
-npm install npm-module-name-tbd
+npm install @vzm/verizon-media-connectid
 
 ## Usage
 
@@ -57,13 +57,13 @@ the dist directory.  Depending on the browsers you are targeting and how your pr
 how to import the module.
 
 * Import the module
-    * ES5: <code>import connectId from npm-module-name-tbd</code>
-    * ES6: <code>import connectId from npm-module-name-tbd/src/connectid</code>
+    * ES5: <code>import connectId from @vzm/verizon-media-connectid</code>
+    * ES6: <code>import connectId from @vzm/verizon-media-connectid/src/connectid</code>
 * Call <code>connectId.getIds(params, callback)</code> 
 * The callback function will be called with all available mapped IDs
 
  ```
-import connectId from 'npm-module-name-tbd';
+import connectId from '@vzm/verizon-media-connectid';
 
 // code running on a first party domain ...
 
