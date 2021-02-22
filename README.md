@@ -1,85 +1,43 @@
-# Verizon Media ConnectID JS Module
+Verizon Media ConnectID JavaScript Module Integration Method
+==========
 
-## Description
+The Verizon Media ConnectID is designed to enable ad tech platforms to recognize and match users consistently across the open web. The Verizon Media ConnectID is built on top of Verizon Media's robust and proprietary ID Graph, delivering a higher find rate of audiences on publishers' sites user targeting. This module is compatible with all major browsers and IE11.
 
-The Verizon Media ConnectID is designed to enable ad tech platforms to recognize and match users consistently across the open web. The Verizon Media ConnectID is built on top of Verizon Media's
-robust and proprietary ID Graph, delivering a higher find rate of audiences on publishers' sites user targeting.
-
-## Terms of Use
-
-All use of the Verizon Media ConnectID, associated APIs, code, and scripts, and data are subject to the Verizon Media Master Terms and Conditions here:
-
-https://www.verizonmedia.com/policies/us/en/verizonmedia/terms/advertising/masterterms/masterterms-322/index.html
-
-And Verizon Media ConnectID Addendum here:
-
-https://yahoo.secure.force.com/tnc/tc?id=VMID-Addendum-v1
-
-Advertiser uses are subject to the Verizon Media Pixel and Custom Audience Policy here:
-
-https://www.verizonmedia.com/policies/xw/en/verizonmedia/privacy/enterprise/pixelandcustomaudience/index.html
+Terms of Use
+------------
 
 ALL INTEGRATIONS MUST BE APPROVED AND REGISTERED prior to use by the Verizon Media Account team. Contact your account manager for more information.
 
+All use of the Verizon Media ConnectID, associated APIs, code, and scripts and data are subject to the [Verizon Media Master Terms and Conditions](https://www.verizonmedia.com/policies/us/en/verizonmedia/terms/advertising/masterterms/masterterms-322/index.html) and the [Verizon Media ConnectID Addendum](https://yahoo.secure.force.com/tnc/tc?id=VMID-Addendum-v1). Advertiser uses are subject to the [Verizon Media Pixel and Custom Audience Policy.](https://www.verizonmedia.com/policies/xw/en/verizonmedia/privacy/enterprise/pixelandcustomaudience/index.html)
 
+Integration
+-----------
 
+1.  <p>Install the package into the project using npm by running the following command in the terminal.</p>
 
+        npm install @vzm/verizon-media-connectid
 
-## Prerequisites
+1.  Add one of the following into the source code. The module includes source code written in ES6 in the src directory as well as transpiled and minified into ES5 in the dist directory.
+    -   ES5: import connectId from @vzm/verizon-media-connectid
+    -   ES6: import connectId from @vzm/verizon-media-connectid/src/connectid
 
-Node.js
+1.  Get the Verizon Media  ConnectID by adding the following into the source code. Please note it must be run on the first party domain of the website.
 
-## Installation
+        // code running on a first party domain ...
+        
+        const params = {
+          pixelId: ..., // publisher specific pixel id
+          email: ..., // raw or a SHA-256 hashed of a lowercase and trimmed of   
+          // white space email address
+          gdpr: ..., // true if user is under gdpr jurisdiction, otherwise false
+          gdpr_consent: ... // gdpr consent string (required if gdpr is true)
+        };
+        
+        const callback = ids => {
+          // ids is a map of id type to value, for example {connectid: 'abc123'}
+          // pass ids.connectid in request to ad server
+        };
+        
+        connectId.getIds(params, callback);
 
-npm install @vzm/verizon-media-connectid
-
-## Usage
-
-This module is intended to be run in a browser on the first party domain, typically packaged with an ad tag. This 
-module provides a method named <code>getIds</code>.  The interaction between the ad tag and the <code>getIds</code>
-method are as follows.
-
-1. Ad tag retrieves an email (raw or hashed) from the page.
-2. Ad tag passes email to the <code>getIds</code> method in this module.  
-3. The getIds method returns the locally cached Verizon Media ConnectID associated with that email (if available).  Local Storage 
-is used for caching these IDs
-4. The getIds method then calls Verizon Media's Pixel Server to retrieve the Verizon Media ConnectID if it is not available locally.
-
-If a raw email is provided, a SHA-256 hash of the email will be used for syncing and local storage.  A raw email 
-is identified by the existence of an "@" character in the value.
-
-The Local Storage key used to cache the ConnectID is "vm-connectid"
-
-## Integration
-
-This module includes source files written in ES6 in the src directory as well as transpiled and minified code in 
-the dist directory.  Depending on the browsers you are targeting and how your project is set up, you may choose
-how to import the module.
-
-* Import the module
-    * ES5: <code>import connectId from @vzm/verizon-media-connectid</code>
-    * ES6: <code>import connectId from @vzm/verizon-media-connectid/src/connectid</code>
-* Call <code>connectId.getIds(params, callback)</code> 
-* The callback function will be called with all available mapped IDs
-
- ```
-import connectId from '@vzm/verizon-media-connectid';
-
-// code running on a first party domain ...
-
-const params = {
-  pixelId: ..., // publisher specific pixel id
-  email: ..., // raw or hashed email
-  gdpr: ..., // true if user is under gdpr jurisdiction, otherwise false
-  gdpr_consent: ... // gdpr consent string (required if gdpr is true)
-};
-
-connectId.getIds(params, ids => {
-  // ids is a map of id type to value, for example {connectid: 'abc123'}
-  // pass ids.connectid in request to ad server
-});
-```
-
-## Browser Compatibility
-
-This module is compatible with all major browsers and IE11.
+    If a raw email is provided then a SHA-256 hash of the raw email will be used for syncing and local storage.
