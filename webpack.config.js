@@ -30,6 +30,7 @@ module.exports = {
     contentBase: './dist',
     hot: true,
     disableHostCheck: true,
+    https: true
   },
   plugins: [
     new HtmlWebpackPlugin({
