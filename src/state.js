@@ -56,7 +56,32 @@ const setUserState = (hashedEmail, userState) => {
   setState(state);
 };
 
+/**
+ * Provides most recently provided hashed email
+ *
+ * @returns {?string}
+ */
+const getMostRecentHashedEmail = () => {
+  return getState().mostRecentHashedEmail;
+};
+
+/**
+ * Stores most recently provided hashed email
+ *
+ * @param {string} hashedEmail
+ */
+const setMostRecentHashedEmail = hashedEmail => {
+  const state = {
+    ...getState(),
+    mostRecentHashedEmail: hashedEmail,
+  };
+
+  setState(state);
+};
+
 export default {
   getUserState,
   setUserState,
+  getMostRecentHashedEmail,
+  setMostRecentHashedEmail,
 };

@@ -31,13 +31,15 @@ const getHashedEmail = (email, callback) => {
 const getIds = (
   {
     pixelId,
-    email,
+    email: providedEmail,
     gdpr,
     gdprConsent,
     vm1p,
   },
   callback
 ) => {
+  const email = providedEmail || state.getMostRecentHashedEmail();
+
   // pixelId and email are required parameters
   if (!pixelId || !email) {
     callback({});
@@ -46,6 +48,8 @@ const getIds = (
 
   // compute hashed email
   getHashedEmail(email, hashedEmail => {
+    state.setMostRecentHashedEmail(hashedEmail);
+
     // sync ids for hashed email
     sync.syncIds({
       pixelId,

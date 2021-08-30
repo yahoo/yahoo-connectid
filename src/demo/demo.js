@@ -26,6 +26,11 @@ const renderLocalStorageData = () => {
   const rows = data
     ? Object.keys(data).map((key) => {
       const value = data[key];
+
+      if (!value.connectId) {
+        return null;
+      }
+
       return `<tr>
       <td>${key}</td>
       <td>${value.connectid.value}</td>
