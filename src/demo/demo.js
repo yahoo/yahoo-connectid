@@ -6,6 +6,7 @@ import connectid from '../connectid';
 let localStorageDataJson = '';
 
 const renderLocalStorageData = () => {
+
   const json = window.localStorage.getItem('vm-connectid');
 
   if (json === localStorageDataJson) {
@@ -27,7 +28,7 @@ const renderLocalStorageData = () => {
     ? Object.keys(data).map((key) => {
       const value = data[key];
 
-      if (!value.connectId) {
+      if (!value.connectid) {
         return null;
       }
 
@@ -49,6 +50,7 @@ const callGetIds = () => {
   document.getElementById('email').value = demoState.email || '';
   document.getElementById('gdpr').value = demoState.gdpr || '0';
   document.getElementById('gdprConsent').value = demoState.gdprConsent || '';
+  document.getElementById('usPrivacy').value = demoState.usPrivacy || '';
 
   // get ids from verizon-media-connectid module
   connectid.getIds(
@@ -65,11 +67,13 @@ const callGetIds = () => {
     const email = document.getElementById('email').value;
     const gdpr = document.getElementById('gdpr').value;
     const gdprConsent = document.getElementById('gdprConsent').value;
+    const usPrivacy = document.getElementById('usPrivacy').value;
     window.localStorage.setItem('vm-connectid-demo', JSON.stringify({
       pixelId,
       email,
       gdpr,
-      gdprConsent
+      gdprConsent,
+      usPrivacy
     }));
 
     callGetIds();
