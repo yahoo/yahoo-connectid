@@ -30,6 +30,7 @@ const sync = {};
  * @param {string} hashedEmail - (required) hashed email
  * @param {boolean} gdpr - (required) true if GDPR applies, otherwise false
  * @param {string?} gdprConsent - (optional) GDPR consent string.  Required if GDPR applies.
+ * @param {string?} usPrivacy - (optional)
  * @param {boolean} vm1p - true if used in a Verizon Media O&O page, otherwise false
  */
 sync.syncHashedEmail = ({
@@ -37,6 +38,7 @@ sync.syncHashedEmail = ({
   hashedEmail,
   gdpr,
   gdprConsent,
+  usPrivacy,
   vm1p,
 }) => {
   if (!pixelId || !hashedEmail) {
@@ -59,6 +61,7 @@ sync.syncHashedEmail = ({
     he: hashedEmail,
     ...gdpr !== undefined ? {gdpr} : {},
     ...gdprConsent !== undefined ? {gdpr_consent: gdprConsent} : {},
+    ...usPrivacy !== undefined ? {us_privacy: usPrivacy} : {},
     ...vm1p !== undefined ? {'1p': vm1p} : {},
   };
 

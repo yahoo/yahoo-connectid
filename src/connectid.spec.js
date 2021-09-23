@@ -54,13 +54,14 @@ describe('connectid', () => {
 
     it('should initiate sync', done => {
       spyOn(sync, 'syncIds');
-      connectid.getIds({pixelId: 12345, email: 'abc', gdpr: true, gdprConsent: 'C012345', vm1p: true}, done);
+      connectid.getIds({pixelId: 12345, email: 'abc', gdpr: true, gdprConsent: 'C012345', usPrivacy: '1---', vm1p: true}, done);
       expect(sync.syncIds).toHaveBeenCalledWith(
         {
           pixelId: 12345,
           hashedEmail: 'abc',
           gdpr: true,
           gdprConsent: 'C012345',
+          usPrivacy: '1---',
           vm1p: true
         }
       );

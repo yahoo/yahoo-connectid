@@ -65,8 +65,17 @@ describe('sync', () => {
       localStorage.setItem('vm-connectid', JSON.stringify(mockState));
 
       spyOn(api, 'sendRequest');
-      sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc'});
-      expect(api.sendRequest).toHaveBeenCalled();
+      sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc', gdpr: 1, gdprConsent: 'foo', usPrivacy: '1---'});
+      expect(api.sendRequest).toHaveBeenCalledWith(
+        'https://ups.analytics.yahoo.com/ups/12345/fed',
+        {
+          he: 'abc',
+          gdpr: 1,
+          gdpr_consent: 'foo',
+          us_privacy: '1---'
+        },
+        jasmine.any(Function)
+      );
     });
 
     it('should store connectid (returned as connectid) in state', () => {
