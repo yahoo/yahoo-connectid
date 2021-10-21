@@ -30,7 +30,8 @@ Integration
           email: ..., // raw or a SHA-256 hashed of a lowercase and trimmed of   
           // white space email address
           gdpr: ..., // true if user is under gdpr jurisdiction, otherwise false
-          gdpr_consent: ... // gdpr consent string (required if gdpr is true)
+          gdprConsent: ... // gdpr consent string (required if gdpr is true)
+          usPrivacy: ... // US Privacy string
         };
         
         const callback = ids => {
