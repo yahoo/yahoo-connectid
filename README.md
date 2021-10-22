@@ -1,27 +1,27 @@
-Verizon Media ConnectID JavaScript Module Integration Method
+Yahoo ConnectID JavaScript Module Integration Method
 ==========
 
-The Verizon Media ConnectID is designed to enable ad tech platforms to recognize and match users consistently across the open web. The Verizon Media ConnectID is built on top of Verizon Media's robust and proprietary ID Graph, delivering a higher find rate of audiences on publishers' sites user targeting. This module is compatible with all major browsers and IE11.
+The Yahoo ConnectID is designed to enable ad tech platforms to recognize and match users consistently across the open web. The Yahoo ConnectID is built on top of Yahoo's robust and proprietary ID Graph, delivering a higher find rate of audiences on publishers' sites user targeting. This module is compatible with all major browsers and IE11.
 
 Terms of Use
 ------------
 
-ALL INTEGRATIONS MUST BE APPROVED AND REGISTERED prior to use by the Verizon Media Account team. Contact your account manager for more information.
+ALL INTEGRATIONS MUST BE APPROVED AND REGISTERED prior to use by the Yahoo Account team. Contact your account manager for more information.
 
-All use of the Verizon Media ConnectID, associated APIs, code, and scripts and data are subject to the [Verizon Media Master Terms and Conditions](https://www.verizonmedia.com/policies/us/en/verizonmedia/terms/advertising/masterterms/masterterms-322/index.html) and the [Verizon Media ConnectID Addendum](https://yahoo.secure.force.com/tnc/tc?id=VMID-Addendum-v1). Advertiser uses are subject to the [Verizon Media Pixel and Custom Audience Policy.](https://www.verizonmedia.com/policies/xw/en/verizonmedia/privacy/enterprise/pixelandcustomaudience/index.html)
+All use of the Yahoo ConnectID, associated APIs, code, and scripts and data are subject to the [Yahoo Master Terms and Conditions](https://legal.yahoo.com/us/en/yahoo/terms/advertising-322/index.html) and the [Yahoo ConnectID Addendum](https://yahoo.secure.force.com/tnc/tc?id=VMID-Addendum-v1). Advertiser uses are subject to the [Yahoo Pixel and Custom Audience Policy.](https://legal.yahoo.com/xw/en/yahoo/privacy/enterprise/pixelandcustomaudience/index.html)
 
 Integration
 -----------
 
 1.  <p>Install the package into the project using npm by running the following command in the terminal.</p>
 
-        npm install @vzm/verizon-media-connectid
+        npm install @yahoo/yahoo-connectid
 
 1.  Add one of the following into the source code. The module includes source code written in ES6 in the src directory as well as transpiled and minified into ES5 in the dist directory.
-    -   ES5: import connectId from @vzm/verizon-media-connectid
-    -   ES6: import connectId from @vzm/verizon-media-connectid/src/connectid
+    -   ES5: import connectId from @yahoo/yahoo-connectid
+    -   ES6: import connectId from @yahoo/yahoo-connectid/src/connectid
 
-1.  Get the Verizon Media  ConnectID by adding the following into the source code. Please note it must be run on the first party domain of the website.
+1.  Get the Yahoo ConnectID by adding the following into the source code. Please note it must be run on the first party domain of the website.
 
         // code running on a first party domain ...
         
@@ -29,9 +29,9 @@ Integration
           pixelId: ..., // publisher specific pixel id
           email: ..., // raw or a SHA-256 hashed of a lowercase and trimmed of   
           // white space email address
-          gdpr: ..., // true if user is under gdpr jurisdiction, otherwise false
-          gdprConsent: ... // gdpr consent string (required if gdpr is true)
-          usPrivacy: ... // US Privacy string
+          gdpr: ..., // (optional) true if user is under gdpr jurisdiction, otherwise false
+          gdprConsent: ... // (optional) gdpr consent string (required if gdpr is true)
+          usPrivacy: ... // (optional) US Privacy string
         };
         
         const callback = ids => {

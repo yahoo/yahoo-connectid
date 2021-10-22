@@ -1,4 +1,4 @@
-/* Copyright Verizon Media, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
+/* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
 import $ from 'jquery';
 import connectid from '../connectid';
@@ -52,7 +52,7 @@ const callGetIds = () => {
   document.getElementById('gdprConsent').value = demoState.gdprConsent || '';
   document.getElementById('usPrivacy').value = demoState.usPrivacy || '';
 
-  // get ids from verizon-media-connectid module
+  // get ids from yahoo-connectid module
   connectid.getIds(
     demoState,
     ids => {

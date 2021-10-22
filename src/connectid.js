@@ -1,4 +1,4 @@
-/* Copyright Verizon Media, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
+/* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
 import sha256 from './sha256';
 import state from './state';
@@ -26,7 +26,7 @@ const getHashedEmail = (email, callback) => {
  * @param {boolean} gdpr - (required) true if GDPR applies, otherwise false
  * @param {string?} gdprConsent - (optional) GDPR consent string.  Only required when GDPR applies
  * @param {string?} usPrivacy - (optional)
- * @param {boolean} vm1p - true if used in a Verizon Media O&O page, otherwise false
+ * @param {boolean} vm1p - true if used in a Yahoo O&O page, otherwise false
  * @param {Function} callback - (required)
  */
 const getIds = (
