@@ -1,6 +1,8 @@
-/* Copyright Verizon Media, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
+/* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
 import state from './state';
+
+const LOCALSTORAGE_KEY = 'yahoo-connectid';
 
 describe('state', () => {
   beforeEach(() => {
@@ -23,7 +25,7 @@ describe('state', () => {
           connectid: 'abc_connectid'
         },
       };
-      localStorage.setItem('vm-connectid', JSON.stringify(mockState));
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
       expect(state.getUserState('abc')).toEqual(mockState.abc);
     });
   });
@@ -35,7 +37,7 @@ describe('state', () => {
       };
 
       state.setUserState('abc', mockState.abc);
-      expect(localStorage.getItem('vm-connectid')).toEqual(JSON.stringify(mockState));
+      expect(localStorage.getItem(LOCALSTORAGE_KEY)).toEqual(JSON.stringify(mockState));
     });
 
     it ('should not throw an exception if invalid state is provided', () => {

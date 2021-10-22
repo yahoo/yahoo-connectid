@@ -1,9 +1,11 @@
-/* Copyright Verizon Media, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
+/* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
 import sinon from 'sinon';
 import api from './api';
 import sync from './sync';
 import state from './state';
+
+const LOCALSTORAGE_KEY = 'yahoo-connectid';
 
 describe('sync', () => {
   const now = new Date();
@@ -45,7 +47,7 @@ describe('sync', () => {
           }
         },
       };
-      localStorage.setItem('vm-connectid', JSON.stringify(mockState));
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
 
       spyOn(api, 'sendRequest');
       sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc'});
@@ -62,7 +64,7 @@ describe('sync', () => {
           }
         },
       };
-      localStorage.setItem('vm-connectid', JSON.stringify(mockState));
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
 
       spyOn(api, 'sendRequest');
       sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc', gdpr: 1, gdprConsent: 'foo', usPrivacy: '1---'});
@@ -82,24 +84,6 @@ describe('sync', () => {
       spyOn(state, 'setUserState');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
         callback({connectid: 'fake_connectid'});
-      });
-
-      sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc'});
-      expect(state.setUserState).toHaveBeenCalledWith(
-        'abc',
-        {
-          connectid: {
-            value: 'fake_connectid',
-            lastUpdated: now.toISOString()
-          }
-        }
-      );
-    });
-
-    it('should store connectid (returned as vmuid) in state', () => {
-      spyOn(state, 'setUserState');
-      spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
-        callback({vmuid: 'fake_connectid'});
       });
 
       sync.syncHashedEmail({pixelId: 12345, hashedEmail: 'abc'});
