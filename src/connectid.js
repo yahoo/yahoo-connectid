@@ -26,7 +26,7 @@ const getHashedEmail = (email, callback) => {
  * @param {boolean} gdpr - (required) true if GDPR applies, otherwise false
  * @param {string?} gdprConsent - (optional) GDPR consent string.  Only required when GDPR applies
  * @param {string?} usPrivacy - (optional)
- * @param {boolean} vm1p - true if used in a Yahoo O&O page, otherwise false
+ * @param {boolean} yahoo1p - true if used in a Yahoo O&O page, otherwise false
  * @param {Function} callback - (required)
  */
 const getIds = (
@@ -36,7 +36,7 @@ const getIds = (
     gdpr,
     gdprConsent,
     usPrivacy,
-    vm1p,
+    yahoo1p,
   },
   callback
 ) => {
@@ -59,7 +59,7 @@ const getIds = (
       ...gdpr !== undefined ? {gdpr} : {},
       ...gdprConsent !== undefined ? {gdprConsent} : {},
       ...usPrivacy !== undefined ? {usPrivacy} : {},
-      ...vm1p !== undefined ? {vm1p} : {},
+      ...yahoo1p !== undefined ? {yahoo1p} : {},
     });
 
     // return locally stored ids for hashed email.  This responds immediately.  It does not wait for the sync

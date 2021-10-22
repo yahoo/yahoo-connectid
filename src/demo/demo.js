@@ -3,11 +3,14 @@
 import $ from 'jquery';
 import connectid from '../connectid';
 
+const LOCALSTORAGE_KEY = 'yahoo-connectid';
+const LOCALSTORAGE_KEY_DEMO = 'yahoo-connectid-demo';
+
 let localStorageDataJson = '';
 
 const renderLocalStorageData = () => {
 
-  const json = window.localStorage.getItem('vm-connectid');
+  const json = window.localStorage.getItem(LOCALSTORAGE_KEY);
 
   if (json === localStorageDataJson) {
     return;
@@ -45,7 +48,7 @@ const renderLocalStorageData = () => {
 };
 
 const callGetIds = () => {
-  const demoState = JSON.parse(window.localStorage.getItem('vm-connectid-demo') || '{}');
+  const demoState = JSON.parse(window.localStorage.getItem(LOCALSTORAGE_KEY_DEMO) || '{}');
   document.getElementById('pixelId').value = demoState.pixelId || '';
   document.getElementById('email').value = demoState.email || '';
   document.getElementById('gdpr').value = demoState.gdpr || '0';
@@ -68,7 +71,7 @@ const callGetIds = () => {
     const gdpr = document.getElementById('gdpr').value;
     const gdprConsent = document.getElementById('gdprConsent').value;
     const usPrivacy = document.getElementById('usPrivacy').value;
-    window.localStorage.setItem('vm-connectid-demo', JSON.stringify({
+    window.localStorage.setItem(LOCALSTORAGE_KEY_DEMO, JSON.stringify({
       pixelId,
       email,
       gdpr,
@@ -81,7 +84,7 @@ const callGetIds = () => {
 
   document.getElementById('reset').onclick = evt => {
     window.localStorage.clear();
-    window.localStorage.removeItem('vm-connectid-demo');
+    window.localStorage.removeItem(LOCALSTORAGE_KEY_DEMO);
     callGetIds();
   };
 

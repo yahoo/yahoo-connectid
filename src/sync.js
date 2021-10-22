@@ -31,7 +31,7 @@ const sync = {};
  * @param {boolean} gdpr - (required) true if GDPR applies, otherwise false
  * @param {string?} gdprConsent - (optional) GDPR consent string.  Required if GDPR applies.
  * @param {string?} usPrivacy - (optional)
- * @param {boolean} vm1p - true if used in a Yahoo O&O page, otherwise false
+ * @param {boolean} yahoo1p - true if used in a Yahoo O&O page, otherwise false
  */
 sync.syncHashedEmail = ({
   pixelId,
@@ -39,7 +39,7 @@ sync.syncHashedEmail = ({
   gdpr,
   gdprConsent,
   usPrivacy,
-  vm1p,
+  yahoo1p,
 }) => {
   if (!pixelId || !hashedEmail) {
     // pixelId and hashedEmail are required
@@ -62,7 +62,7 @@ sync.syncHashedEmail = ({
     ...gdpr !== undefined ? {gdpr} : {},
     ...gdprConsent !== undefined ? {gdpr_consent: gdprConsent} : {},
     ...usPrivacy !== undefined ? {us_privacy: usPrivacy} : {},
-    ...vm1p !== undefined ? {'1p': vm1p} : {},
+    ...yahoo1p !== undefined ? {'1p': yahoo1p} : {},
   };
 
   api.sendRequest(url, data, response => {
@@ -71,7 +71,7 @@ sync.syncHashedEmail = ({
       state.setUserState(hashedEmail, {
         ...userState,
         connectid: {
-          value: response.vmuid || response.connectid,
+          value: response.connectid,
           lastUpdated: new Date().toISOString(),
         },
       });

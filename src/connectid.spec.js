@@ -4,6 +4,8 @@ import connectid from './connectid';
 import sync from './sync';
 import sha256 from './sha256';
 
+const LOCALSTORAGE_KEY = 'yahoo-connectid';
+
 describe('connectid', () => {
   describe('getIds', () => {
 
@@ -24,7 +26,7 @@ describe('connectid', () => {
           }
         }
       };
-      localStorage.setItem('vm-connectid', JSON.stringify(state));
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
 
       connectid.getIds({pixelId: 12345, email: 'abc'}, response => {
         expect(response).toEqual({
@@ -54,7 +56,7 @@ describe('connectid', () => {
 
     it('should initiate sync', done => {
       spyOn(sync, 'syncIds');
-      connectid.getIds({pixelId: 12345, email: 'abc', gdpr: true, gdprConsent: 'C012345', usPrivacy: '1---', vm1p: true}, done);
+      connectid.getIds({pixelId: 12345, email: 'abc', gdpr: true, gdprConsent: 'C012345', usPrivacy: '1---', yahoo1p: true}, done);
       expect(sync.syncIds).toHaveBeenCalledWith(
         {
           pixelId: 12345,
@@ -62,7 +64,7 @@ describe('connectid', () => {
           gdpr: true,
           gdprConsent: 'C012345',
           usPrivacy: '1---',
-          vm1p: true
+          yahoo1p: true
         }
       );
     });
