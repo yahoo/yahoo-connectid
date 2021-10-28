@@ -1,7 +1,7 @@
 Yahoo ConnectID JavaScript Module Integration Method
 ==========
 
-The Yahoo ConnectID is designed to enable ad tech platforms to recognize and match users consistently across the open web. The Yahoo ConnectID is built on top of Yahoo's robust and proprietary ID Graph, delivering a higher find rate of audiences on publishers' sites user targeting. This module is compatible with all major browsers and IE11.
+With the eventual demise of third party cookies, ad sellers need a solution to bridge the identity gap while continuing to generate revenue. Yahoo ConnectID is a cookieless solution that enables publishers to increase the monetization of their supply while employing targeting that respects user privacy.  This module is compatible with all major browsers and IE11.
 
 Terms of Use
 ------------
