@@ -91,6 +91,35 @@
 
     <h3>All Local Storage Data</h3>
     <pre id="localStorageData"></pre>
+
+    <div id="connectid-optout-link" style="position: absolute; bottom: 16px; right: 16px;"></div>
+    <script>
+      (function () {
+        var optOutLabel = 'Opt-out of connectID';
+        var optInLabel = 'Opt-in to connectID';
+        function setOptedOut(optedOut) {
+          try {
+            window.localStorage.setItem('connectIdOptOut', optedOut ? '1' : '0');
+          } catch (e) {}
+          render();
+        }
+        function render() {
+          var isOptedOut = false;
+          try {
+            isOptedOut = window.localStorage.getItem('connectIdOptOut') === '1';
+          } catch (e) {}
+          var a = document.createElement('a');
+          a.href = 'javascript:';
+          a.title = isOptedOut ? optInLabel : optOutLabel;
+          a.appendChild(document.createTextNode(a.title));
+          a.addEventListener('click', function eventHandler() {setOptedOut(!isOptedOut)});
+          var el = document.getElementById("connectid-optout-link");
+          el.firstChild && el.removeChild(el.firstChild);
+          el.appendChild(a);
+        }
+        render();
+      })();
+    </script>
 </div>
 
 </body>
