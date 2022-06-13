@@ -122,7 +122,7 @@ describe('connectid', () => {
 
     it('should not initate sync if no pixelId is passed in', done => {
       spyOn(sync, 'syncIds');
-      connectid.getIds({enail: 'abc'}, () => {
+      connectid.getIds({email: 'abc'}, () => {
         expect(sync.syncIds).not.toHaveBeenCalled();
         done();
       });
@@ -137,11 +137,44 @@ describe('connectid', () => {
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
 
       spyOn(sync, 'syncIds');
-      connectid.getIds({pixelId: 123, enail: 'abc'}, () => {
+      connectid.getIds({pixelId: 123, email: 'abc'}, () => {
         expect(sync.syncIds).not.toHaveBeenCalled();
         done();
       });
     });
 
+    it('should clear local cache if connectIdOptOut is set to 1', () => {
+      const state = {
+        "hashedEmail": "abc",
+        "connectid": "abc_connectid",
+        "lastUpdated": "2020-07-29T12:35:51.361Z"
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+      window.localStorage.setItem('connectIdOptOut', '1');
+      connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
+      expect(window.localStorage.getItem('yahoo-connectid')).toBe(null);
+    });
+
+    it('should not clear local cache if connectIdOptOut is not set to 2', () => {
+      const state = {
+        "hashedEmail": "abc",
+        "connectid": "abc_connectid",
+        "lastUpdated": "2020-07-29T12:35:51.361Z"
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+      window.localStorage.setItem('connectIdOptOut', '2');
+      connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
+      expect(window.localStorage.getItem('yahoo-connectid')).not.toBe(null);
+    });
+
+    it('should not initate sync if connectOptOut is 1', done => {
+      window.localStorage.setItem('connectIdOptOut', '1');
+
+      spyOn(sync, 'syncIds');
+      connectid.getIds({pixelId: 123, email: 'abc'}, () => {
+        expect(sync.syncIds).not.toHaveBeenCalled();
+        done();
+      });
+    });
   });
 });
