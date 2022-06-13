@@ -7,7 +7,7 @@
  * @param {Object} data - the payload to send as query parameters
  * @param {Function} callback - (required) Called when API responds
  */
-export const sendRequest = (url, data = {}, callback) => {
+export const sendRequest = (url, data, callback) => {
   let xhr = new XMLHttpRequest();
 
   let params = Object.keys(data)

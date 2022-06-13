@@ -9,7 +9,7 @@ import sync from './sync';
  * @param callback
  */
 const getHashedEmail = (email, callback) => {
-  if (email.indexOf('@') < 0) {
+  if (!email || email.indexOf('@') < 0) {
     callback(email);
   } else {
     sha256.computeHash(email, callback);
@@ -32,7 +32,7 @@ const getHashedEmail = (email, callback) => {
 const getIds = (
   {
     pixelId,
-    email: providedEmail,
+    email,
     gdpr,
     gdprConsent,
     usPrivacy,
@@ -40,34 +40,37 @@ const getIds = (
   },
   callback
 ) => {
-  const email = providedEmail || state.getMostRecentHashedEmail();
+  if (!pixelId) {
+    callback({});
+    return;
+  }
 
-  // pixelId and email are required parameters
-  if (!pixelId || !email) {
+  const availableEmail = email || state.getConnectId().hashedEmail;
+  if (!availableEmail) {
     callback({});
     return;
   }
 
   // compute hashed email
-  getHashedEmail(email, hashedEmail => {
-    state.setMostRecentHashedEmail(hashedEmail);
+  getHashedEmail(availableEmail, hashedEmail => {
+    const localData = state.getConnectId({hashedEmail});
+    if (!localData.connectid || localData.isStale) {
+      sync.syncIds({
+        pixelId,
+        ...hashedEmail ? {hashedEmail} : {},
+        ...gdpr !== undefined ? {gdpr} : {},
+        ...gdprConsent !== undefined ? {gdprConsent} : {},
+        ...usPrivacy !== undefined ? {usPrivacy} : {},
+        ...yahoo1p !== undefined ? {yahoo1p} : {},
+      });
+    }
 
-    // sync ids for hashed email
-    sync.syncIds({
-      pixelId,
-      ...hashedEmail ? {hashedEmail} : {},
-      ...gdpr !== undefined ? {gdpr} : {},
-      ...gdprConsent !== undefined ? {gdprConsent} : {},
-      ...usPrivacy !== undefined ? {usPrivacy} : {},
-      ...yahoo1p !== undefined ? {yahoo1p} : {},
-    });
-
-    // return locally stored ids for hashed email.  This responds immediately.  It does not wait for the sync
+    // return locally stored id.  This responds immediately.  It does not wait for the sync
     // process to complete.
-    const userState = state.getUserState(hashedEmail);
-    const connectid = userState.connectid ? userState.connectid.value : undefined;
-    callback(connectid ? {connectid} : {});
-  });
+    callback(localData && localData.connectid ? {
+      connectid: localData.connectid
+    } : {});
+  }, availableEmail);
 };
 
 export default {getIds};

@@ -17,34 +17,10 @@ const renderLocalStorageData = () => {
   }
   localStorageDataJson = json;
 
-  const data = JSON.parse(json);
-
-  const header = data
-    ? `<tr>
-    <th>Hashed Email</th>
-    <th>connectid</th>
-    <th>Last Updated</th>
-  </tr>`
-    : 'no stored data';
-
-  const rows = data
-    ? Object.keys(data).map((key) => {
-      const value = data[key];
-
-      if (!value.connectid) {
-        return null;
-      }
-
-      return `<tr>
-      <td>${key}</td>
-      <td>${value.connectid.value}</td>
-      <td>${value.connectid.lastUpdated}</td>
-    </tr>`;
-    }).join('')
-    : '';
+  const data = JSON.stringify(JSON.parse(json), null, 2);
 
   // display results
-  $('#localStorageData tbody').html(header + rows);
+  $('#localStorageData').text(data);
 };
 
 const callGetIds = () => {
