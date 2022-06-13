@@ -19,12 +19,9 @@ describe('connectid', () => {
 
     it('should return stored user state', done => {
       const state = {
-        "abc": {
-          "connectid": {
-            "value": "abc_connectid",
-            "lastUpdated": "2020-07-29T12:35:51.361Z"
-          }
-        }
+        "hashedEmail": "abc",
+        "connectid": "abc_connectid",
+        "lastUpdated": "2020-07-29T12:35:51.361Z"
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
 
@@ -56,7 +53,14 @@ describe('connectid', () => {
 
     it('should initiate sync', done => {
       spyOn(sync, 'syncIds');
-      connectid.getIds({pixelId: 12345, email: 'abc', gdpr: true, gdprConsent: 'C012345', usPrivacy: '1---', yahoo1p: true}, done);
+      connectid.getIds({
+        pixelId: 12345,
+        email: 'abc',
+        gdpr: true,
+        gdprConsent: 'C012345',
+        usPrivacy: '1---',
+        yahoo1p: true
+      }, done);
       expect(sync.syncIds).toHaveBeenCalledWith(
         {
           pixelId: 12345,
@@ -67,6 +71,18 @@ describe('connectid', () => {
           yahoo1p: true
         }
       );
+    });
+
+    it('should not initiate sync if no email available', done => {
+      spyOn(sync, 'syncIds');
+      connectid.getIds({
+        pixelId: 12345,
+        gdpr: true,
+        gdprConsent: 'C012345',
+        usPrivacy: '1---',
+        yahoo1p: true
+      }, done);
+      expect(sync.syncIds).not.toHaveBeenCalled();
     });
 
     it('should hash email if raw email is passed in', done => {
@@ -111,5 +127,21 @@ describe('connectid', () => {
         done();
       });
     });
+
+    it('should not initate sync if local data is available and not stale', done => {
+      const state = {
+        "hashedEmail": "abc",
+        "connectid": "abc_connectid",
+        "lastUpdated": new Date(),
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+
+      spyOn(sync, 'syncIds');
+      connectid.getIds({pixelId: 123, enail: 'abc'}, () => {
+        expect(sync.syncIds).not.toHaveBeenCalled();
+        done();
+      });
+    });
+
   });
 });

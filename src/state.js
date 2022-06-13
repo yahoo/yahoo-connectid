@@ -3,85 +3,69 @@
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 
 /**
- * Read state from Local Storage
+ * Determines if a specified timestamp is considered recent.
  *
- * @returns {Object}
+ * @param {string} timestamp
+ * @returns {boolean} true if recent, otherwise false
  */
-const getState = () => {
-  let state = {};
-  try {
-    state = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || {};
-  } catch (e) {
+const isRecentTimestamp = timestamp => {
+  if (!timestamp) {
+    return false;
   }
 
-  return state;
+  const now = new Date();
+  const then = new Date(timestamp);
+  const syncFrequencyHours = 15 * 24; // 15 days
+  const millisecondsInOneHour = 1000 * 60 * 60;
+  return (now - then) / millisecondsInOneHour < syncFrequencyHours;
 };
 
-/**
- * Write state to Local Storage
- *
- * @param {Object} state
- */
-const setState = state => {
+const getConnectId = (ids) => {
+  const hashedEmail = (ids || {}).hashedEmail;
+
+  let data;
   try {
-    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+    data = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || {};
   } catch (e) {
+    data = {};
   }
+
+  // if no identifier provided or identifier matches local data
+  // return locally stored connectid
+  if ((!hashedEmail) ||
+    (hashedEmail && hashedEmail === data.hashedEmail)) {
+    if (!data.connectid) {
+      return {};
+    }
+    return {
+      hashedEmail: data.hashedEmail,
+      connectid: data.connectid,
+      isStale: !isRecentTimestamp(data.lastUpdated),
+    };
+  }
+
+  return {};
 };
 
-/**
- * Read state for a specified user based on their hashed email
- *
- * @param {string} hashedEmail
- * @returns {{connectid: *}}
- */
-const getUserState = hashedEmail => {
-  return {
-    ...getState()[hashedEmail] || {}
-  };
-};
+const setConnectId = (data) => {
+  const hashedEmail = data ? data.hashedEmail : null;
+  const connectid = data ? data.connectid : null;
 
-/**
- * Write state for a specified user based on their hashed email
- *
- * @param {string} hashedEmail
- * @param {Object} userState
- */
-const setUserState = (hashedEmail, userState) => {
-  const state = {
-    ...getState(),
-    [hashedEmail]: userState,
-  };
+  if (connectid && (hashedEmail)) {
+    const data = {
+      connectid,
+      hashedEmail,
+      lastUpdated: new Date().toISOString(),
+    };
 
-  setState(state);
-};
-
-/**
- * Provides most recently provided hashed email
- *
- * @returns {?string}
- */
-const getMostRecentHashedEmail = () => {
-  return getState().mostRecentHashedEmail;
-};
-
-/**
- * Stores most recently provided hashed email
- *
- * @param {string} hashedEmail
- */
-const setMostRecentHashedEmail = hashedEmail => {
-  const state = {
-    ...getState(),
-    mostRecentHashedEmail: hashedEmail,
-  };
-
-  setState(state);
+    try {
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+    }
+  }
 };
 
 export default {
-  getUserState,
-  setUserState,
-  getMostRecentHashedEmail,
-  setMostRecentHashedEmail,
+  getConnectId,
+  setConnectId,
 };

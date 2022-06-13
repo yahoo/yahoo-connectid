@@ -3,24 +3,6 @@
 import state from "./state";
 import api from './api';
 
-/**
- * Determines if a specified timestamp is considered recent.
- *
- * @param {string} timestamp
- * @returns {boolean} true if recent, otherwise false
- */
-const isRecentTimestamp = timestamp => {
-  if (!timestamp) {
-    return false;
-  }
-
-  const now = new Date();
-  const then = new Date(timestamp);
-  const syncFrequencyHours = 15 * 24; // 15 days
-  const millisecondsInOneHour = 1000 * 60 * 60;
-  return (now - then) / millisecondsInOneHour < syncFrequencyHours;
-};
-
 const sync = {};
 
 /**
@@ -41,18 +23,9 @@ sync.syncHashedEmail = ({
   usPrivacy,
   yahoo1p,
 }) => {
+  // pixelId and hashedEmail are required
   if (!pixelId || !hashedEmail) {
-    // pixelId and hashedEmail are required
     return;
-  }
-
-  const userState = state.getUserState(hashedEmail);
-  if (userState.connectid) {
-    const wasSyncedRecently = isRecentTimestamp(userState.connectid.lastUpdated);
-    if (wasSyncedRecently) {
-      // don't sync if hashedEmail was already synced recently
-      return;
-    }
   }
 
   // call UPS to get connectid
@@ -67,13 +40,9 @@ sync.syncHashedEmail = ({
 
   api.sendRequest(url, data, response => {
     if (response) {
-      // store connectid in local state
-      state.setUserState(hashedEmail, {
-        ...userState,
-        connectid: {
-          value: response.connectid,
-          lastUpdated: new Date().toISOString(),
-        },
+      state.setConnectId({
+        hashedEmail,
+        connectid: response.connectid,
       });
     }
   });
