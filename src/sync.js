@@ -9,29 +9,32 @@ const sync = {};
  * Calls UPS endpoint to retrieve ConnectID, and stores the result in Local Storage
  *
  * @param {number} pixelId - (required) pixel id
- * @param {string} hashedEmail - (required) hashed email
+ * @param {string} hashedEmail - (optional) hashed email.  hashedEmail or puid must be provided
+ * @param {string} puid - (optional) publisher user identifier. hashedEmail or puid must be provided
  * @param {boolean} gdpr - (required) true if GDPR applies, otherwise false
  * @param {string?} gdprConsent - (optional) GDPR consent string.  Required if GDPR applies.
  * @param {string?} usPrivacy - (optional)
  * @param {boolean} yahoo1p - true if used in a Yahoo O&O page, otherwise false
  */
-sync.syncHashedEmail = ({
+sync.syncIds = ({
   pixelId,
   hashedEmail,
+  puid,
   gdpr,
   gdprConsent,
   usPrivacy,
   yahoo1p,
 }) => {
-  // pixelId and hashedEmail are required
-  if (!pixelId || !hashedEmail) {
+  // pixelId and either hashedEmail or puid are required
+  if (!pixelId || (!hashedEmail && !puid)) {
     return;
   }
 
   // call UPS to get connectid
   const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
   const data = {
-    he: hashedEmail,
+    ...hashedEmail ? {he: hashedEmail} : {},
+    ...puid ? {puid} : {},
     ...gdpr !== undefined ? {gdpr} : {},
     ...gdprConsent !== undefined ? {gdpr_consent: gdprConsent} : {},
     ...usPrivacy !== undefined ? {us_privacy: usPrivacy} : {},
@@ -41,23 +44,12 @@ sync.syncHashedEmail = ({
   api.sendRequest(url, data, response => {
     if (response) {
       state.setConnectId({
-        hashedEmail,
+        ...hashedEmail ? {hashedEmail} : {},
+        ...puid ? {puid} : {},
         connectid: response.connectid,
       });
     }
   });
-};
-
-/**
- * Currently, only ConnectID is supported.  Therefore, this function just calls syncHashedEmail.  Once more IDs
- * become supported, this function should be updated to call multiple sync functions.
- *
- * @param {object} params - (required) Should include hashedEmail, gdpr, and gdprConsent properties
- */
-sync.syncIds = (params) => {
-  if (params.hashedEmail) {
-    sync.syncHashedEmail(params);
-  }
 };
 
 export default sync;

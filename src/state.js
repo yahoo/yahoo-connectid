@@ -22,6 +22,7 @@ const isRecentTimestamp = timestamp => {
 
 const getConnectId = (ids) => {
   const hashedEmail = (ids || {}).hashedEmail;
+  const puid = (ids || {}).puid;
 
   let data;
   try {
@@ -30,15 +31,17 @@ const getConnectId = (ids) => {
     data = {};
   }
 
-  // if no identifier provided or identifier matches local data
+  // if no identifiers provided or identifiers match local data
   // return locally stored connectid
-  if ((!hashedEmail) ||
-    (hashedEmail && hashedEmail === data.hashedEmail)) {
+  if ((!hashedEmail && !puid) ||
+    (hashedEmail && hashedEmail === data.hashedEmail) ||
+    (puid && puid === data.puid)) {
     if (!data.connectid) {
       return {};
     }
     return {
-      hashedEmail: data.hashedEmail,
+      ...data.hashedEmail ? {hashedEmail: data.hashedEmail} : {},
+      ...data.puid ? {puid: data.puid} : {},
       connectid: data.connectid,
       isStale: !isRecentTimestamp(data.lastUpdated),
     };
@@ -49,12 +52,14 @@ const getConnectId = (ids) => {
 
 const setConnectId = (data) => {
   const hashedEmail = data ? data.hashedEmail : null;
+  const puid = data ? data.puid : null;
   const connectid = data ? data.connectid : null;
 
-  if (connectid && (hashedEmail)) {
+  if (connectid && (hashedEmail || puid)) {
     const data = {
       connectid,
       hashedEmail,
+      puid,
       lastUpdated: new Date().toISOString(),
     };
 
