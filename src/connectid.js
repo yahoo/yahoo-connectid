@@ -40,6 +40,18 @@ const getIds = (
   },
   callback
 ) => {
+  let optOut = false;
+  try {
+    optOut = window.localStorage.getItem('connectIdOptOut');
+  } catch (e) {
+  }
+
+  if (optOut === '1') {
+    state.clear();
+    callback({});
+    return;
+  }
+
   if (!pixelId) {
     callback({});
     return;
