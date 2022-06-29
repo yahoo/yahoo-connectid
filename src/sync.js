@@ -6,6 +6,42 @@ import api from './api';
 const sync = {};
 
 /**
+ * Determines if a specified timestamp is considered recent.
+ *
+ * @param {string} timestamp
+ * @returns {boolean} true if recent, otherwise false
+ */
+const isRecentTimestamp = timestamp => {
+  if (!timestamp) {
+    return false;
+  }
+
+  const now = new Date();
+  const then = new Date(timestamp);
+  const syncFrequencyHours = 15 * 24; // 15 days
+  const millisecondsInOneHour = 1000 * 60 * 60;
+  return (now - then) / millisecondsInOneHour < syncFrequencyHours;
+};
+
+const shouldSync = ({pixelId, hashedEmail, puid}) => {
+  // pixelId is required
+  if (!pixelId) {
+    return false;
+  }
+
+  const {
+    hashedEmail: cachedHashedEmail,
+    puid: cachedPuid,
+    lastUpdated,
+  } = state.getLocalData();
+
+  const hashedEmailChanged = hashedEmail && hashedEmail !== cachedHashedEmail;
+  const puidChanged = puid && puid !== cachedPuid;
+  const connectidIsStale = !isRecentTimestamp(lastUpdated);
+  return hashedEmailChanged || puidChanged || connectidIsStale;
+};
+
+/**
  * Calls UPS endpoint to retrieve ConnectID, and stores the result in Local Storage
  *
  * @param {number} pixelId - (required) pixel id
@@ -25,16 +61,19 @@ sync.syncIds = ({
   usPrivacy,
   yahoo1p,
 }) => {
-  // pixelId and either hashedEmail or puid are required
-  if (!pixelId || (!hashedEmail && !puid)) {
+  if (!shouldSync({pixelId, hashedEmail, puid})) {
     return;
   }
+
+  const localData = state.getLocalData();
+  const latestHashedEmail = hashedEmail || localData.hashedEmail;
+  const latestPuid = puid || localData.puid;
 
   // call UPS to get connectid
   const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
   const data = {
-    ...hashedEmail ? {he: hashedEmail} : {},
-    ...puid ? {puid} : {},
+    ...latestHashedEmail ? {he: latestHashedEmail} : {},
+    ...latestPuid ? {puid: latestPuid} : {},
     ...gdpr !== undefined ? {gdpr} : {},
     ...gdprConsent !== undefined ? {gdpr_consent: gdprConsent} : {},
     ...usPrivacy !== undefined ? {us_privacy: usPrivacy} : {},
@@ -44,8 +83,8 @@ sync.syncIds = ({
   api.sendRequest(url, data, response => {
     if (response) {
       state.setConnectId({
-        ...hashedEmail ? {hashedEmail} : {},
-        ...puid ? {puid} : {},
+        ...latestHashedEmail ? {hashedEmail: latestHashedEmail} : {},
+        ...latestPuid ? {puid: latestPuid} : {},
         connectid: response.connectid,
       });
     }

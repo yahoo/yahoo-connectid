@@ -2,64 +2,43 @@
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 
-/**
- * Determines if a specified timestamp is considered recent.
- *
- * @param {string} timestamp
- * @returns {boolean} true if recent, otherwise false
- */
-const isRecentTimestamp = timestamp => {
-  if (!timestamp) {
-    return false;
-  }
+const pick = function (obj, props) {
+  if (!obj || !props) return {};
+  const picked = {};
+  props.forEach(prop => {
+    picked[prop] = obj[prop];
+  });
+  return picked;
+};
 
-  const now = new Date();
-  const then = new Date(timestamp);
-  const syncFrequencyHours = 15 * 24; // 15 days
-  const millisecondsInOneHour = 1000 * 60 * 60;
-  return (now - then) / millisecondsInOneHour < syncFrequencyHours;
+const getLocalData = () => {
+  try {
+    return JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
 };
 
 const getConnectId = ({hashedEmail, puid} = {}) => {
-  let localData;
-  try {
-    localData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || {};
-  } catch (e) {
-    localData = {};
-  }
-
-  // if no identifiers provided or identifiers match local data
-  // return locally stored connectid
+  const localData = getLocalData();
+  // if no ids provided or any id matches, return connectid
   if ((!hashedEmail && !puid) ||
-    (localData.hashedEmail && !hashedEmail) ||
-    (hashedEmail && hashedEmail === localData.hashedEmail) ||
-    (localData.puid && !puid) ||
-    (puid && puid === localData.puid)) {
-    return {
-      ...localData.hashedEmail ? {hashedEmail: localData.hashedEmail} : {},
-      ...localData.puid ? {puid: localData.puid} : {},
-      ...localData.connectid ? {connectid: localData.connectid} : {},
-      ...localData.connectid ? {isStale: !isRecentTimestamp(localData.lastUpdated)} : {},
-    };
+    hashedEmail && hashedEmail === localData.hashedEmail ||
+    puid && puid === localData.puid) {
+    return pick(localData, ['connectid']);
   }
-
   return {};
 };
 
-const setConnectId = ({hashedEmail, puid, connectid} = {}) => {
-  const localData = getConnectId();
-  if (hashedEmail || puid) {
-    const data = {
-      connectid,
-      hashedEmail: hashedEmail || localData.hashedEmail,
-      puid: puid || localData.puid,
-      lastUpdated: new Date().toISOString(),
-    };
-
-    try {
-      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-    }
+const setConnectId = (data = {}) => {
+  const updatedData = {
+    ...pick(getLocalData(), ['hashedEmail', 'puid', 'connectid']),
+    ...pick(data, ['hashedEmail', 'puid', 'connectid']),
+    lastUpdated: new Date().toISOString(),
+  }
+  try {
+    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(updatedData));
+  } catch (e) {
   }
 };
 
@@ -68,6 +47,7 @@ const clear = () => {
 };
 
 export default {
+  getLocalData,
   getConnectId,
   setConnectId,
   clear,
