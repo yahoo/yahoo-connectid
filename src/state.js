@@ -19,21 +19,24 @@ const getLocalData = () => {
   }
 };
 
-const getConnectId = ({hashedEmail, puid} = {}) => {
+const getConnectId = ({hashedEmail, hashedPuid} = {}) => {
   const localData = getLocalData();
   // if no ids provided or any id matches, return connectid
-  if ((!hashedEmail && !puid) ||
+  if ((!hashedEmail && !hashedPuid) ||
+    !hashedEmail && !!localData.hashedEmail ||
     hashedEmail && hashedEmail === localData.hashedEmail ||
-    puid && puid === localData.puid) {
+    !hashedPuid && !!localData.hashedPuid ||
+    hashedPuid && hashedPuid === localData.hashedPuid) {
     return pick(localData, ['connectid']);
   }
+  debugger;
   return {};
 };
 
 const setConnectId = (data = {}) => {
   const updatedData = {
-    ...pick(getLocalData(), ['hashedEmail', 'puid', 'connectid']),
-    ...pick(data, ['hashedEmail', 'puid', 'connectid']),
+    ...pick(getLocalData(), ['hashedEmail', 'hashedPuid', 'connectid']),
+    ...pick(data, ['hashedEmail', 'hashedPuid', 'connectid']),
     lastUpdated: new Date().toISOString(),
   }
   try {

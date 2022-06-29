@@ -4,50 +4,43 @@ import sha256 from './sha256';
 import state from './state';
 import sync from './sync';
 
+const userOptedOut = () => {
+  let optOut = false;
+  try {
+    optOut = window.localStorage.getItem('connectIdOptOut');
+  } catch (e) {
+  }
+  return optOut === '1';
+};
+
 /**
  * Provides locally stored IDs mapped to the provided email.  Currently, only the ConnectID is supported, however
  * additional IDs (e.g. LiveRamp, LiveIntent, Merkle) may be supported in the future.
  *
- * @param {number} params.pixelId - (required) publisher specific pixel id
- * @param {string?} params.email - (optional) A raw or hashed email.  An email is determined to be raw if it contains
- * @param {string?} params.puid - (optional) Publisher's user identifier
+ * @param {Object} config - config
+ * @param {number} config.pixelId - (required) publisher specific pixel id
+ * @param {string?} config.email - (optional) A raw or hashed email.  An email is determined to be raw if it contains
+ * @param {string?} config.puid - (optional) Publisher's user identifier
  * an "@" character.  If no email is provided, the most recently provided email will be used.
- * @param {boolean} params.gdpr - (required) true if GDPR applies, otherwise false
- * @param {string?} params.gdprConsent - (optional) GDPR consent string.  Only required when GDPR applies
- * @param {string?} params.usPrivacy - (optional)
- * @param {boolean} params.yahoo1p - true if used in a Yahoo O&O page, otherwise false
+ * @param {boolean} config.gdpr - (required) true if GDPR applies, otherwise false
+ * @param {string?} config.gdprConsent - (optional) GDPR consent string.  Only required when GDPR applies
+ * @param {string?} config.usPrivacy - (optional)
+ * @param {boolean} config.yahoo1p - true if used in a Yahoo O&O page, otherwise false
  * @param {Function} callback - (required)
  */
-const getIds = (params, callback) => {
-  const {
-    email,
-    puid,
-    ...otherParams
-  } = params;
+const getIds = (config, callback) => {
+  const {email, puid, ...otherParams} = config;
 
-  try {
-    const optOut = window.localStorage.getItem('connectIdOptOut');
-    if (optOut === '1') {
-      state.clear();
-      callback({});
-      return;
-    }
-  } catch (e) {
-  }
-
-  if (!params.pixelId) {
+  if (userOptedOut()) {
+    state.clear();
     callback({});
     return;
   }
 
   sha256.getHashedIdentifier(email, hashedEmail => {
     sha256.getHashedIdentifier(puid, hashedPuid => {
-      callback(state.getConnectId({hashedEmail, puid: hashedPuid}));
-      sync.syncIds({
-        ...otherParams,
-        hashedEmail,
-        puid: hashedPuid,
-      });
+      callback(state.getConnectId({hashedEmail, hashedPuid}));
+      sync.syncIds({hashedEmail, hashedPuid, ...otherParams,});
     });
   });
 };
