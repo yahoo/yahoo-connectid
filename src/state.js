@@ -20,46 +20,39 @@ const isRecentTimestamp = timestamp => {
   return (now - then) / millisecondsInOneHour < syncFrequencyHours;
 };
 
-const getConnectId = (ids) => {
-  const hashedEmail = (ids || {}).hashedEmail;
-  const puid = (ids || {}).puid;
-
-  let data;
+const getConnectId = ({hashedEmail, puid} = {}) => {
+  let localData;
   try {
-    data = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || {};
+    localData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || {};
   } catch (e) {
-    data = {};
+    localData = {};
   }
 
   // if no identifiers provided or identifiers match local data
   // return locally stored connectid
   if ((!hashedEmail && !puid) ||
-    (hashedEmail && hashedEmail === data.hashedEmail) ||
-    (puid && puid === data.puid)) {
-    if (!data.connectid) {
-      return {};
-    }
+    (localData.hashedEmail && !hashedEmail) ||
+    (hashedEmail && hashedEmail === localData.hashedEmail) ||
+    (localData.puid && !puid) ||
+    (puid && puid === localData.puid)) {
     return {
-      ...data.hashedEmail ? {hashedEmail: data.hashedEmail} : {},
-      ...data.puid ? {puid: data.puid} : {},
-      connectid: data.connectid,
-      isStale: !isRecentTimestamp(data.lastUpdated),
+      ...localData.hashedEmail ? {hashedEmail: localData.hashedEmail} : {},
+      ...localData.puid ? {puid: localData.puid} : {},
+      connectid: localData.connectid,
+      isStale: !isRecentTimestamp(localData.lastUpdated),
     };
   }
 
   return {};
 };
 
-const setConnectId = (data) => {
-  const hashedEmail = data ? data.hashedEmail : null;
-  const puid = data ? data.puid : null;
-  const connectid = data ? data.connectid : null;
-
-  if (connectid && (hashedEmail || puid)) {
+const setConnectId = ({hashedEmail, puid, connectid} = {}) => {
+  const localData = getConnectId();
+  if (hashedEmail || puid) {
     const data = {
       connectid,
-      hashedEmail,
-      puid,
+      hashedEmail: hashedEmail || localData.hashedEmail,
+      puid: puid || localData.puid,
       lastUpdated: new Date().toISOString(),
     };
 

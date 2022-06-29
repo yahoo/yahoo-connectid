@@ -21,6 +21,28 @@ const computeHash = (str, callback) => {
   }
 };
 
+/**
+ * Determines if a string is a valid sha256 hash
+ * @param str
+ */
+const isValidHash = str => {
+  const regex = /^[a-f0-9]{64}$/gi;
+  return regex.test(str || '');
+};
+
+/**
+ * @param {string} identifier - raw or hashed id
+ * @param callback
+ */
+const getHashedIdentifier = (identifier, callback) => {
+  if (!identifier || isValidHash(identifier)) {
+    callback(identifier);
+  } else {
+    computeHash(identifier, callback);
+  }
+};
+
+
 export default {
-  computeHash,
+  getHashedIdentifier,
 };

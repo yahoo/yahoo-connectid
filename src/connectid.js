@@ -5,18 +5,6 @@ import state from './state';
 import sync from './sync';
 
 /**
- * @param {string} email - (required) raw or hashed email
- * @param callback
- */
-const getHashedEmail = (email, callback) => {
-  if (!email || email.indexOf('@') < 0) {
-    callback(email);
-  } else {
-    sha256.computeHash(email, callback);
-  }
-};
-
-/**
  * Provides locally stored IDs mapped to the provided email.  Currently, only the ConnectID is supported, however
  * additional IDs (e.g. LiveRamp, LiveIntent, Merkle) may be supported in the future.
  *
@@ -42,16 +30,14 @@ const getIds = (
   },
   callback
 ) => {
-  let optOut = false;
   try {
-    optOut = window.localStorage.getItem('connectIdOptOut');
+    const optOut = window.localStorage.getItem('connectIdOptOut');
+    if (optOut === '1') {
+      state.clear();
+      callback({});
+      return;
+    }
   } catch (e) {
-  }
-
-  if (optOut === '1') {
-    state.clear();
-    callback({});
-    return;
   }
 
   if (!pixelId) {
@@ -59,32 +45,31 @@ const getIds = (
     return;
   }
 
-  const availableEmail = email || state.getConnectId().hashedEmail;
-  if (!availableEmail && !puid) {
-    callback({});
-    return;
-  }
+  sha256.getHashedIdentifier(email, hashedEmail => {
+    sha256.getHashedIdentifier(puid, hashedPuid => {
+      const localData = state.getConnectId({hashedEmail, puid: hashedPuid});
+      if (!localData.connectid || localData.isStale) {
+        const availableHashedEmail = hashedEmail || localData.hashedEmail;
+        const availableHashedPuid = hashedPuid || localData.puid;
+        if (availableHashedEmail || availableHashedPuid) {
+          sync.syncIds({
+            pixelId,
+            ...availableHashedEmail ? {hashedEmail: availableHashedEmail} : {},
+            ...availableHashedPuid ? {puid: availableHashedPuid} : {},
+            ...gdpr !== undefined ? {gdpr} : {},
+            ...gdprConsent !== undefined ? {gdprConsent} : {},
+            ...usPrivacy !== undefined ? {usPrivacy} : {},
+            ...yahoo1p !== undefined ? {yahoo1p} : {},
+          });
+        }
+      }
 
-  // compute hashed email
-  getHashedEmail(availableEmail, hashedEmail => {
-    const localData = state.getConnectId({hashedEmail, puid});
-    if (!localData.connectid || localData.isStale) {
-      sync.syncIds({
-        pixelId,
-        ...hashedEmail ? {hashedEmail} : {},
-        ...puid ? {puid} : {},
-        ...gdpr !== undefined ? {gdpr} : {},
-        ...gdprConsent !== undefined ? {gdprConsent} : {},
-        ...usPrivacy !== undefined ? {usPrivacy} : {},
-        ...yahoo1p !== undefined ? {yahoo1p} : {},
-      });
-    }
-
-    // return locally stored id.  This responds immediately.  It does not wait for the sync
-    // process to complete.
-    callback(localData && localData.connectid ? {
-      connectid: localData.connectid
-    } : {});
+      // return locally stored id.  This responds immediately.  It does not wait for the sync
+      // process to complete.
+      callback(localData && localData.connectid ? {
+        connectid: localData.connectid
+      } : {});
+    });
   });
 };
 
