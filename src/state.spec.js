@@ -36,9 +36,7 @@ describe('state', () => {
       };
 
       const expectedResult = {
-        hashedEmail: 'abc',
         connectid: 'abc_connectid',
-        isStale: true,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
@@ -53,9 +51,7 @@ describe('state', () => {
       };
 
       const expectedResponse = {
-        hashedEmail: 'abc',
         connectid: 'abc_connectid',
-        isStale: true,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
@@ -70,9 +66,7 @@ describe('state', () => {
       };
 
       const expectedResponse = {
-        hashedEmail: mockHashedIdentifier,
         connectid: 'abc_connectid',
-        isStale: false,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
@@ -88,8 +82,8 @@ describe('state', () => {
       };
 
       const expectedStoredValue = {
-        connectid: 'def_connectid',
         hashedEmail: 'def',
+        connectid: 'def_connectid',
         lastUpdated: new Date(),
       };
 

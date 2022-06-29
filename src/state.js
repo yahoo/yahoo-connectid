@@ -6,7 +6,9 @@ const pick = function (obj, props) {
   if (!obj || !props) return {};
   const picked = {};
   props.forEach(prop => {
-    picked[prop] = obj[prop];
+    if (obj[prop] !== undefined) {
+      picked[prop] = obj[prop];
+    }
   });
   return picked;
 };
@@ -29,7 +31,6 @@ const getConnectId = ({hashedEmail, hashedPuid} = {}) => {
     hashedPuid && hashedPuid === localData.hashedPuid) {
     return pick(localData, ['connectid']);
   }
-  debugger;
   return {};
 };
 

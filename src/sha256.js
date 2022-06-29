@@ -36,7 +36,7 @@ const isValidHash = str => {
  */
 const getHashedIdentifier = (identifier, callback) => {
   if (!identifier) {
-    callback('');
+    callback(undefined);
   } else if (isValidHash(identifier)) {
     callback(identifier);
   } else {

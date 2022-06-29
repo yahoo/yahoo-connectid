@@ -2,13 +2,14 @@
 
 import connectid from './connectid';
 import sync from './sync';
+import api from './api';
 import sha256 from './sha256';
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 const mockHashedIdentifier = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
 
 const mockGetHashedIdentifier = (id, callback) => {
-  callback(id ? mockHashedIdentifier : '');
+  callback(id ? mockHashedIdentifier : id);
 };
 
 describe('connectid', () => {
@@ -48,13 +49,16 @@ describe('connectid', () => {
     it('should initiate sync when email provided', done => {
       spyOn(sha256, 'getHashedIdentifier').and.callFake(mockGetHashedIdentifier);
       spyOn(sync, 'syncIds');
-      connectid.getIds({pixelId: 12345, email: 'abc'}, done);
-      expect(sync.syncIds).toHaveBeenCalledWith(
-        {
-          pixelId: 12345,
-          hashedEmail: mockHashedIdentifier,
-        }
-      );
+      connectid.getIds({pixelId: 12345, email: 'abc'}, () => {
+        expect(sync.syncIds).toHaveBeenCalledWith(
+          {
+            pixelId: 12345,
+            hashedEmail: mockHashedIdentifier,
+            hashedPuid: undefined,
+          }
+        );
+        done();
+      });
     });
 
     it('should initiate sync when email and privacy flags are set', done => {
@@ -67,29 +71,34 @@ describe('connectid', () => {
         gdprConsent: 'C012345',
         usPrivacy: '1---',
         yahoo1p: true
-      }, done);
-      expect(sync.syncIds).toHaveBeenCalledWith(
-        {
-          pixelId: 12345,
-          hashedEmail: mockHashedIdentifier,
-          gdpr: true,
-          gdprConsent: 'C012345',
-          usPrivacy: '1---',
-          yahoo1p: true
-        }
-      );
+      }, () => {
+        expect(sync.syncIds).toHaveBeenCalledWith(
+          {
+            pixelId: 12345,
+            hashedEmail: mockHashedIdentifier,
+            hashedPuid: undefined,
+            gdpr: true,
+            gdprConsent: 'C012345',
+            usPrivacy: '1---',
+            yahoo1p: true
+          }
+        );
+        done();
+      });
     });
 
     it('should not initiate sync if no email available', done => {
-      spyOn(sync, 'syncIds');
+      spyOn(api, 'sendRequest');
       connectid.getIds({
         pixelId: 12345,
         gdpr: true,
         gdprConsent: 'C012345',
         usPrivacy: '1---',
         yahoo1p: true
-      }, done);
-      expect(sync.syncIds).not.toHaveBeenCalled();
+      }, () => {
+        expect(api.sendRequest).not.toHaveBeenCalled();
+      });
+      done();
     });
 
     it('should hash email if raw email is passed in', done => {
@@ -99,31 +108,32 @@ describe('connectid', () => {
         expect(sync.syncIds).toHaveBeenCalledWith({
           pixelId: 12345,
           hashedEmail: mockHashedIdentifier,
+          hashedPuid: undefined,
         });
         done();
       });
     });
 
     it('should fail gracefully when hashing if browser does not support crypto', done => {
-      spyOn(sync, 'syncIds');
+      spyOn(api, 'sendRequest');
       connectid.getIds({pixelId: 12345, email: 'abc@foo.com'}, () => {
-        expect(sync.syncIds).not.toHaveBeenCalled();
+        expect(api.sendRequest).not.toHaveBeenCalled();
         done();
       });
     });
 
     it('should not initate sync if no email is passed in', done => {
-      spyOn(sync, 'syncIds');
+      spyOn(api, 'sendRequest');
       connectid.getIds({pixelId: 12345}, () => {
-        expect(sync.syncIds).not.toHaveBeenCalled();
+        expect(api.sendRequest).not.toHaveBeenCalled();
         done();
       });
     });
 
     it('should not initate sync if no pixelId is passed in', done => {
-      spyOn(sync, 'syncIds');
+      spyOn(api, 'sendRequest');
       connectid.getIds({email: 'abc'}, () => {
-        expect(sync.syncIds).not.toHaveBeenCalled();
+        expect(api.sendRequest).not.toHaveBeenCalled();
         done();
       });
     });
@@ -136,9 +146,9 @@ describe('connectid', () => {
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
 
-      spyOn(sync, 'syncIds');
+      spyOn(api, 'sendRequest');
       connectid.getIds({pixelId: 123, email: mockHashedIdentifier}, () => {
-        expect(sync.syncIds).not.toHaveBeenCalled();
+        expect(api.sendRequest).not.toHaveBeenCalled();
         done();
       });
     });
@@ -170,9 +180,9 @@ describe('connectid', () => {
     it('should not initate sync if connectOptOut is 1', done => {
       window.localStorage.setItem('connectIdOptOut', '1');
 
-      spyOn(sync, 'syncIds');
+      spyOn(api, 'sendRequest');
       connectid.getIds({pixelId: 123, email: 'abc'}, () => {
-        expect(sync.syncIds).not.toHaveBeenCalled();
+        expect(api.sendRequest).not.toHaveBeenCalled();
         done();
       });
     });

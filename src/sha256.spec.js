@@ -28,18 +28,18 @@ describe('sha256', () => {
 
     it('should return empty string if empty string is provided', done => {
       sha256.getHashedIdentifier(undefined, hash1 => {
-        expect(hash1).toBe('');
+        expect(hash1).toBeUndefined();
         sha256.getHashedIdentifier(null, hash2 => {
-          expect(hash2).toBe('');
+          expect(hash2).toBeUndefined();
           sha256.getHashedIdentifier('', hash3 => {
-            expect(hash3).toBe('');
+            expect(hash3).toBeUndefined();
             done();
           });
         });
       });
     });
 
-    it('should return empty string if non-string value is provided',  done => {
+    it('should return empty string if non-string value is provided', done => {
       sha256.getHashedIdentifier(1, hash1 => {
         expect(hash1).toBe('');
         sha256.getHashedIdentifier(true, hash2 => {

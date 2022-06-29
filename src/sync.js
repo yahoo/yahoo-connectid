@@ -35,10 +35,13 @@ const shouldSync = ({pixelId, hashedEmail, hashedPuid}) => {
     lastUpdated,
   } = state.getLocalData();
 
+  const hashedEmailExists = hashedEmail || cachedHashedEmail;
+  const hashedPuidExists = hashedPuid || cachedHashedPuid;
   const hashedEmailChanged = hashedEmail && hashedEmail !== cachedHashedEmail;
   const hashedPuidChanged = hashedPuid && hashedPuid !== cachedHashedPuid;
   const connectidIsStale = !isRecentTimestamp(lastUpdated);
-  return hashedEmailChanged || hashedPuidChanged || connectidIsStale;
+  return (hashedEmailExists || hashedPuidExists) &&
+    (hashedEmailChanged || hashedPuidChanged || connectidIsStale);
 };
 
 /**

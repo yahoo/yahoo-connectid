@@ -39,8 +39,8 @@ const getIds = (config, callback) => {
 
   sha256.getHashedIdentifier(email, hashedEmail => {
     sha256.getHashedIdentifier(puid, hashedPuid => {
-      callback(state.getConnectId({hashedEmail, hashedPuid}));
       sync.syncIds({hashedEmail, hashedPuid, ...otherParams,});
+      callback(state.getConnectId({hashedEmail, hashedPuid}));
     });
   });
 };
