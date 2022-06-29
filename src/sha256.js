@@ -35,7 +35,9 @@ const isValidHash = str => {
  * @param callback
  */
 const getHashedIdentifier = (identifier, callback) => {
-  if (!identifier || isValidHash(identifier)) {
+  if (!identifier) {
+    callback('');
+  } else if (isValidHash(identifier)) {
     callback(identifier);
   } else {
     computeHash(identifier, callback);

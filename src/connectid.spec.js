@@ -5,6 +5,11 @@ import sync from './sync';
 import sha256 from './sha256';
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
+const mockHashedIdentifier = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
+
+const mockGetHashedIdentifier = (id, callback) => {
+  callback(id ? mockHashedIdentifier : '');
+};
 
 describe('connectid', () => {
   describe('getIds', () => {
@@ -40,18 +45,20 @@ describe('connectid', () => {
       });
     });
 
-    it('should initiate sync', done => {
+    it('should initiate sync when email provided', done => {
+      spyOn(sha256, 'getHashedIdentifier').and.callFake(mockGetHashedIdentifier);
       spyOn(sync, 'syncIds');
       connectid.getIds({pixelId: 12345, email: 'abc'}, done);
       expect(sync.syncIds).toHaveBeenCalledWith(
         {
           pixelId: 12345,
-          hashedEmail: 'abc',
+          hashedEmail: mockHashedIdentifier,
         }
       );
     });
 
-    it('should initiate sync', done => {
+    it('should initiate sync when email and privacy flags are set', done => {
+      spyOn(sha256, 'getHashedIdentifier').and.callFake(mockGetHashedIdentifier);
       spyOn(sync, 'syncIds');
       connectid.getIds({
         pixelId: 12345,
@@ -64,7 +71,7 @@ describe('connectid', () => {
       expect(sync.syncIds).toHaveBeenCalledWith(
         {
           pixelId: 12345,
-          hashedEmail: 'abc',
+          hashedEmail: mockHashedIdentifier,
           gdpr: true,
           gdprConsent: 'C012345',
           usPrivacy: '1---',
@@ -87,13 +94,11 @@ describe('connectid', () => {
 
     it('should hash email if raw email is passed in', done => {
       spyOn(sync, 'syncIds');
-      spyOn(sha256, 'computeHash').and.callFake((str, callback) => {
-        callback('fake_hashed_email');
-      });
+      spyOn(sha256, 'getHashedIdentifier').and.callFake(mockGetHashedIdentifier);
       connectid.getIds({pixelId: 12345, email: 'abc@foo.com'}, () => {
         expect(sync.syncIds).toHaveBeenCalledWith({
           pixelId: 12345,
-          hashedEmail: 'fake_hashed_email',
+          hashedEmail: mockHashedIdentifier,
         });
         done();
       });
@@ -101,13 +106,8 @@ describe('connectid', () => {
 
     it('should fail gracefully when hashing if browser does not support crypto', done => {
       spyOn(sync, 'syncIds');
-      spyOn(sha256, 'computeHash').and.callFake((str, callback) => {
-        callback('');
-      });
       connectid.getIds({pixelId: 12345, email: 'abc@foo.com'}, () => {
-        expect(sync.syncIds).toHaveBeenCalledWith({
-          pixelId: 12345
-        });
+        expect(sync.syncIds).not.toHaveBeenCalled();
         done();
       });
     });
@@ -130,14 +130,14 @@ describe('connectid', () => {
 
     it('should not initate sync if local data is available and not stale', done => {
       const state = {
-        "hashedEmail": "abc",
+        "hashedEmail": mockHashedIdentifier,
         "connectid": "abc_connectid",
         "lastUpdated": new Date(),
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
 
       spyOn(sync, 'syncIds');
-      connectid.getIds({pixelId: 123, email: 'abc'}, () => {
+      connectid.getIds({pixelId: 123, email: mockHashedIdentifier}, () => {
         expect(sync.syncIds).not.toHaveBeenCalled();
         done();
       });

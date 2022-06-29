@@ -38,8 +38,8 @@ const getConnectId = ({hashedEmail, puid} = {}) => {
     return {
       ...localData.hashedEmail ? {hashedEmail: localData.hashedEmail} : {},
       ...localData.puid ? {puid: localData.puid} : {},
-      connectid: localData.connectid,
-      isStale: !isRecentTimestamp(localData.lastUpdated),
+      ...localData.connectid ? {connectid: localData.connectid} : {},
+      ...localData.connectid ? {isStale: !isRecentTimestamp(localData.lastUpdated)} : {},
     };
   }
 
