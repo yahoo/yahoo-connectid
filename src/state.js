@@ -47,7 +47,7 @@ const setConnectId = (data = {}) => {
 };
 
 const clear = () => {
-  localStorage.removeItem('yahoo-connectid');
+  localStorage.removeItem(LOCALSTORAGE_KEY);
 };
 
 export default {
