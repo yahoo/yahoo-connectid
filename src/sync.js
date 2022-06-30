@@ -6,32 +6,77 @@ import api from './api';
 const sync = {};
 
 /**
+ * Determines if a specified timestamp is considered recent.
+ *
+ * @param {string} timestamp
+ * @returns {boolean} true if recent, otherwise false
+ */
+const isRecentTimestamp = timestamp => {
+  if (!timestamp) {
+    return false;
+  }
+
+  const now = new Date();
+  const then = new Date(timestamp);
+  const syncFrequencyHours = 15 * 24; // 15 days
+  const millisecondsInOneHour = 1000 * 60 * 60;
+  return (now - then) / millisecondsInOneHour < syncFrequencyHours;
+};
+
+const shouldSync = ({pixelId, hashedEmail, hashedPuid}) => {
+  // pixelId is required
+  if (!pixelId) {
+    return false;
+  }
+
+  const {
+    hashedEmail: cachedHashedEmail,
+    hashedPuid: cachedHashedPuid,
+    lastUpdated,
+  } = state.getLocalData();
+
+  const hashedEmailExists = hashedEmail || cachedHashedEmail;
+  const hashedPuidExists = hashedPuid || cachedHashedPuid;
+  const hashedEmailChanged = hashedEmail && hashedEmail !== cachedHashedEmail;
+  const hashedPuidChanged = hashedPuid && hashedPuid !== cachedHashedPuid;
+  const connectidIsStale = !isRecentTimestamp(lastUpdated);
+  return (hashedEmailExists || hashedPuidExists) &&
+    (hashedEmailChanged || hashedPuidChanged || connectidIsStale);
+};
+
+/**
  * Calls UPS endpoint to retrieve ConnectID, and stores the result in Local Storage
  *
  * @param {number} pixelId - (required) pixel id
- * @param {string} hashedEmail - (required) hashed email
+ * @param {string} hashedEmail - (optional) hashed email.  hashedEmail or hashedPuid must be provided
+ * @param {string} hashedPuid - (optional) publisher user identifier. hashedEmail or hashedPuid must be provided
  * @param {boolean} gdpr - (required) true if GDPR applies, otherwise false
  * @param {string?} gdprConsent - (optional) GDPR consent string.  Required if GDPR applies.
  * @param {string?} usPrivacy - (optional)
  * @param {boolean} yahoo1p - true if used in a Yahoo O&O page, otherwise false
  */
-sync.syncHashedEmail = ({
+sync.syncIds = ({
   pixelId,
   hashedEmail,
+  hashedPuid,
   gdpr,
   gdprConsent,
   usPrivacy,
   yahoo1p,
 }) => {
-  // pixelId and hashedEmail are required
-  if (!pixelId || !hashedEmail) {
+  if (!shouldSync({pixelId, hashedEmail, hashedPuid})) {
     return;
   }
+
+  const localData = state.getLocalData();
+  const latestHashedEmail = hashedEmail || localData.hashedEmail;
+  const latestHashedPuid = hashedPuid || localData.hashedPuid;
 
   // call UPS to get connectid
   const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
   const data = {
-    he: hashedEmail,
+    ...latestHashedEmail ? {he: latestHashedEmail} : {},
+    ...latestHashedPuid ? {puid: latestHashedPuid} : {},
     ...gdpr !== undefined ? {gdpr} : {},
     ...gdprConsent !== undefined ? {gdpr_consent: gdprConsent} : {},
     ...usPrivacy !== undefined ? {us_privacy: usPrivacy} : {},
@@ -41,23 +86,12 @@ sync.syncHashedEmail = ({
   api.sendRequest(url, data, response => {
     if (response) {
       state.setConnectId({
-        hashedEmail,
+        ...latestHashedEmail ? {hashedEmail: latestHashedEmail} : {},
+        ...latestHashedPuid ? {hashedPuid: latestHashedPuid} : {},
         connectid: response.connectid,
       });
     }
   });
-};
-
-/**
- * Currently, only ConnectID is supported.  Therefore, this function just calls syncHashedEmail.  Once more IDs
- * become supported, this function should be updated to call multiple sync functions.
- *
- * @param {object} params - (required) Should include hashedEmail, gdpr, and gdprConsent properties
- */
-sync.syncIds = (params) => {
-  if (params.hashedEmail) {
-    sync.syncHashedEmail(params);
-  }
 };
 
 export default sync;

@@ -27,6 +27,7 @@ const callGetIds = () => {
   const demoState = JSON.parse(window.localStorage.getItem(LOCALSTORAGE_KEY_DEMO) || '{}');
   document.getElementById('pixelId').value = demoState.pixelId || '';
   document.getElementById('email').value = demoState.email || '';
+  document.getElementById('puid').value = demoState.puid || '';
   document.getElementById('gdpr').value = demoState.gdpr || '0';
   document.getElementById('gdprConsent').value = demoState.gdprConsent || '';
   document.getElementById('usPrivacy').value = demoState.usPrivacy || '';
@@ -41,15 +42,17 @@ const callGetIds = () => {
 };
 
 (() => {
-  document.getElementById('emailButton').onclick = evt => {
+  document.getElementById('execute').onclick = evt => {
     const pixelId = document.getElementById('pixelId').value;
     const email = document.getElementById('email').value;
+    const puid = document.getElementById('puid').value;
     const gdpr = document.getElementById('gdpr').value;
     const gdprConsent = document.getElementById('gdprConsent').value;
     const usPrivacy = document.getElementById('usPrivacy').value;
     window.localStorage.setItem(LOCALSTORAGE_KEY_DEMO, JSON.stringify({
       pixelId,
       email,
+      puid,
       gdpr,
       gdprConsent,
       usPrivacy

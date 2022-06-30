@@ -3,7 +3,7 @@
 import sha256 from './sha256';
 
 describe('sha256', () => {
-  describe('computeHash', () => {
+  describe('getHashedIdentifier', () => {
     // commented out until the crypto API is polyfilled into test harness
     xit('should hash string', done => {
       const testStrings = [
@@ -17,9 +17,9 @@ describe('sha256', () => {
         }
       ];
 
-      sha256.computeHash(testStrings[0].raw, hash1 => {
+      sha256.getHashedIdentifier(testStrings[0].raw, hash1 => {
         expect(hash1).toBe(testStrings[0].hashed);
-        sha256.computeHash(testStrings[1].raw, hash2 => {
+        sha256.getHashedIdentifier(testStrings[1].raw, hash2 => {
           expect(hash2).toBe(testStrings[1].hashed);
           done();
         });
@@ -27,22 +27,22 @@ describe('sha256', () => {
     });
 
     it('should return empty string if empty string is provided', done => {
-      sha256.computeHash(undefined, hash1 => {
-        expect(hash1).toBe('');
-        sha256.computeHash(null, hash2 => {
-          expect(hash2).toBe('');
-          sha256.computeHash('', hash3 => {
-            expect(hash3).toBe('');
+      sha256.getHashedIdentifier(undefined, hash1 => {
+        expect(hash1).toBeUndefined();
+        sha256.getHashedIdentifier(null, hash2 => {
+          expect(hash2).toBeUndefined();
+          sha256.getHashedIdentifier('', hash3 => {
+            expect(hash3).toBeUndefined();
             done();
           });
         });
       });
     });
 
-    it('should return empty string if non-string value is provided',  done => {
-      sha256.computeHash(1, hash1 => {
+    it('should return empty string if non-string value is provided', done => {
+      sha256.getHashedIdentifier(1, hash1 => {
         expect(hash1).toBe('');
-        sha256.computeHash(true, hash2 => {
+        sha256.getHashedIdentifier(true, hash2 => {
           expect(hash2).toBe('');
           done();
         });

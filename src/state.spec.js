@@ -4,6 +4,7 @@ import state from './state';
 import sinon from "sinon";
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
+const mockHashedIdentifier = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
 
 describe('state', () => {
   const now = new Date();
@@ -25,7 +26,7 @@ describe('state', () => {
     });
 
     it('should return empty object if no state is stored for provided email', () => {
-      expect(state.getConnectId('abc')).toEqual({});
+      expect(state.getConnectId({hashedEmail: 'abc'})).toEqual({});
     });
 
     it('should return stored state for specified user', () => {
@@ -35,13 +36,11 @@ describe('state', () => {
       };
 
       const expectedResult = {
-        hashedEmail: 'abc',
         connectid: 'abc_connectid',
-        isStale: true,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId('abc')).toEqual(expectedResult);
+      expect(state.getConnectId({hashedEmail: 'abc'})).toEqual(expectedResult);
     });
 
     it('should return true for isStale if not updated recently', () => {
@@ -52,30 +51,26 @@ describe('state', () => {
       };
 
       const expectedResponse = {
-        hashedEmail: 'abc',
         connectid: 'abc_connectid',
-        isStale: true,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId('abc')).toEqual(expectedResponse);
+      expect(state.getConnectId({hashedEmail: 'abc'})).toEqual(expectedResponse);
     });
 
     it('should return false for isStale if updated recently', () => {
       const mockState = {
-        hashedEmail: 'abc',
+        hashedEmail: mockHashedIdentifier,
         connectid: 'abc_connectid',
         lastUpdated: new Date(),
       };
 
       const expectedResponse = {
-        hashedEmail: 'abc',
         connectid: 'abc_connectid',
-        isStale: false,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId('abc')).toEqual(expectedResponse);
+      expect(state.getConnectId({hashedEmail: mockHashedIdentifier})).toEqual(expectedResponse);
     });
   });
 
@@ -87,8 +82,8 @@ describe('state', () => {
       };
 
       const expectedStoredValue = {
-        connectid: 'def_connectid',
         hashedEmail: 'def',
+        connectid: 'def_connectid',
         lastUpdated: new Date(),
       };
 
@@ -98,19 +93,19 @@ describe('state', () => {
 
     it('should not throw an exception if invalid state is provided', () => {
       expect(() => {
-        state.setConnectId(null);
+        state.setConnectId({hashedEmail: 'abc', connectid: null});
       }).not.toThrow();
       expect(() => {
-        state.setConnectId(123);
+        state.setConnectId({hashedEmail: 'abc', connectid: 123});
       }).not.toThrow();
       expect(() => {
-        state.setConnectId(true);
+        state.setConnectId({hashedEmail: 'abc', connectid: true});
       }).not.toThrow();
       expect(() => {
-        state.setConnectId(undefined);
+        state.setConnectId({hashedEmail: 'abc', connectid: undefined});
       }).not.toThrow();
       expect(() => {
-        state.setConnectId('def');
+        state.setConnectId({});
       }).not.toThrow();
     });
   });
