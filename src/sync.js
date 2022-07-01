@@ -3,25 +3,13 @@
 import state from "./state";
 import api from './api';
 
-const sync = {};
-
 /**
- * Determines if a specified timestamp is considered recent.
+ * Determines if a specified timestamp is stale (in the past).
  *
- * @param {string} timestamp
- * @returns {boolean} true if recent, otherwise false
+ * @param {string} ts timestamp
+ * @returns {boolean} true if stale, otherwise false
  */
-const isRecentTimestamp = timestamp => {
-  if (!timestamp) {
-    return false;
-  }
-
-  const now = new Date();
-  const then = new Date(timestamp);
-  const syncFrequencyHours = 15 * 24; // 15 days
-  const millisecondsInOneHour = 1000 * 60 * 60;
-  return (now - then) / millisecondsInOneHour < syncFrequencyHours;
-};
+const isStale = ts => (!ts || new Date(ts).getTime() < Date.now());
 
 const shouldSync = ({pixelId, hashedEmail, hashedPuid}) => {
   // pixelId is required
@@ -32,17 +20,18 @@ const shouldSync = ({pixelId, hashedEmail, hashedPuid}) => {
   const {
     hashedEmail: cachedHashedEmail,
     hashedPuid: cachedHashedPuid,
-    lastUpdated,
+    expires,
   } = state.getLocalData();
 
   const hashedEmailExists = hashedEmail || cachedHashedEmail;
   const hashedPuidExists = hashedPuid || cachedHashedPuid;
   const hashedEmailChanged = hashedEmail && hashedEmail !== cachedHashedEmail;
   const hashedPuidChanged = hashedPuid && hashedPuid !== cachedHashedPuid;
-  const connectidIsStale = !isRecentTimestamp(lastUpdated);
   return (hashedEmailExists || hashedPuidExists) &&
-    (hashedEmailChanged || hashedPuidChanged || connectidIsStale);
+    (hashedEmailChanged || hashedPuidChanged || isStale(expires));
 };
+
+const sync = {};
 
 /**
  * Calls UPS endpoint to retrieve ConnectID, and stores the result in Local Storage
@@ -89,6 +78,7 @@ sync.syncIds = ({
         ...latestHashedEmail ? {hashedEmail: latestHashedEmail} : {},
         ...latestHashedPuid ? {hashedPuid: latestHashedPuid} : {},
         connectid: response.connectid,
+        ttl: response.ttl,
       });
     }
   });
