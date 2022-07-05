@@ -44,7 +44,7 @@ const getConnectId = ({hashedEmail, hashedPuid} = {}) => {
 const setConnectId = (data = {}) => {
   const expires = computeExpiration(data.ttl).getTime();
   const updatedData = {
-    ...pick(getLocalData(), ['hashedEmail', 'hashedPuid', 'connectid']),
+    ...pick(getLocalData(), ['hashedEmail', 'hashedPuid']),
     ...pick(data, ['hashedEmail', 'hashedPuid', 'connectid']),
     expires,
   }
