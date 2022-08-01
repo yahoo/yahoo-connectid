@@ -2,7 +2,7 @@
 
 import state from "./state";
 import api from './api';
-import {getPrivacyData} from './privacy';
+import privacy from './privacy';
 
 /**
  * Determines if a specified timestamp is stale (in the past).
@@ -60,7 +60,7 @@ sync.syncIds = ({
 
   const providedPrivacyData = {gdprApplies, tcString, uspString};
 
-  getPrivacyData(providedPrivacyData, (privacyData, success) => {
+  privacy.getPrivacyData(providedPrivacyData, (privacyData, success) => {
     const localData = state.getLocalData();
     const latestHashedEmail = hashedEmail || localData.hashedEmail;
     const latestHashedPuid = hashedPuid || localData.hashedPuid;

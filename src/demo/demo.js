@@ -24,9 +24,7 @@ const mockPrivacyApis = () => {
   };
 };
 
-
 const renderLocalStorageData = () => {
-
   const json = window.localStorage.getItem(LOCALSTORAGE_KEY);
 
   if (json === localStorageDataJson) {

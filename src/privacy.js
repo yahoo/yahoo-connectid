@@ -48,10 +48,14 @@ const getUSPData = (providedPrivacyData, callback) => {
   });
 };
 
-export const getPrivacyData = (providedPrivacyData, callback) => {
+const getPrivacyData = (providedPrivacyData, callback) => {
   getUSPData(providedPrivacyData, (uspData, uspDataSuccess) => {
     getTCFData(providedPrivacyData, (tcfData, tcfDataSuccess) => {
       callback({...uspData, ...tcfData}, uspDataSuccess && tcfDataSuccess);
     });
   });
+};
+
+export default {
+  getPrivacyData
 };
