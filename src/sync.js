@@ -2,6 +2,7 @@
 
 import state from "./state";
 import api from './api';
+import {getPrivacyData} from './privacy';
 
 /**
  * Determines if a specified timestamp is stale (in the past).
@@ -48,39 +49,43 @@ sync.syncIds = ({
   pixelId,
   hashedEmail,
   hashedPuid,
-  gdpr,
-  gdprConsent,
-  usPrivacy,
+  gdpr: gdprApplies,
+  gdprConsent: tcString,
+  usPrivacy: uspString,
   yahoo1p,
 }) => {
   if (!shouldSync({pixelId, hashedEmail, hashedPuid})) {
     return;
   }
 
-  const localData = state.getLocalData();
-  const latestHashedEmail = hashedEmail || localData.hashedEmail;
-  const latestHashedPuid = hashedPuid || localData.hashedPuid;
+  const providedPrivacyData = {gdprApplies, tcString, uspString};
 
-  // call UPS to get connectid
-  const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
-  const data = {
-    ...latestHashedEmail ? {he: latestHashedEmail} : {},
-    ...latestHashedPuid ? {puid: latestHashedPuid} : {},
-    ...gdpr !== undefined ? {gdpr} : {},
-    ...gdprConsent !== undefined ? {gdpr_consent: gdprConsent} : {},
-    ...usPrivacy !== undefined ? {us_privacy: usPrivacy} : {},
-    ...yahoo1p !== undefined ? {'1p': yahoo1p} : {},
-  };
+  getPrivacyData(providedPrivacyData, (privacyData, success) => {
+    const localData = state.getLocalData();
+    const latestHashedEmail = hashedEmail || localData.hashedEmail;
+    const latestHashedPuid = hashedPuid || localData.hashedPuid;
 
-  api.sendRequest(url, data, response => {
-    if (response) {
-      state.setConnectId({
-        ...latestHashedEmail ? {hashedEmail: latestHashedEmail} : {},
-        ...latestHashedPuid ? {hashedPuid: latestHashedPuid} : {},
-        connectid: response.connectid,
-        ttl: response.ttl,
-      });
-    }
+    // call UPS to get connectid
+    const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
+    const data = {
+      ...latestHashedEmail ? {he: latestHashedEmail} : {},
+      ...latestHashedPuid ? {puid: latestHashedPuid} : {},
+      ...privacyData.gdprApplies !== undefined ? {gdpr: privacyData.gdprApplies} : {},
+      ...privacyData.tcString !== undefined ? {gdpr_consent: privacyData.tcString} : {},
+      ...privacyData.uspString !== undefined ? {us_privacy: privacyData.uspString} : {},
+      ...yahoo1p !== undefined ? {'1p': yahoo1p} : {},
+    };
+
+    api.sendRequest(url, data, response => {
+      if (response) {
+        state.setConnectId({
+          ...latestHashedEmail ? {hashedEmail: latestHashedEmail} : {},
+          ...latestHashedPuid ? {hashedPuid: latestHashedPuid} : {},
+          connectid: response.connectid,
+          ttl: response.ttl,
+        });
+      }
+    });
   });
 };
 
