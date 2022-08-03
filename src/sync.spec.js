@@ -41,9 +41,6 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       connectid.getIds({
         pixelId: 12345,
-        gdpr: true,
-        gdprConsent: 'C012345',
-        usPrivacy: '1---',
         yahoo1p: true
       }, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
@@ -55,9 +52,6 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       connectid.getIds({
         hashedEmail: MOCK_HASH_EMAIL,
-        gdpr: true,
-        gdprConsent: 'C012345',
-        usPrivacy: '1---',
         yahoo1p: true
       }, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
@@ -86,17 +80,11 @@ describe('sync', () => {
         pixelId: 12345,
         hashedEmail: MOCK_HASH_EMAIL,
         hashedPuid: MOCK_HASH_PUID,
-        gdpr: 1,
-        gdprConsent: 'consent',
-        usPrivacy: '1---',
         yahoo1p: true
       });
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
         he: MOCK_HASH_EMAIL,
         puid: MOCK_HASH_PUID,
-        gdpr: 1,
-        gdpr_consent: 'consent',
-        us_privacy: '1---',
         '1p': true,
       }, jasmine.anything());
     });

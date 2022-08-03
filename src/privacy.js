@@ -1,16 +1,6 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
-const getTCFData = (providedPrivacyData, callback) => {
-  // if privacy data was provided, pass it back
-  if (providedPrivacyData.gdprApplies !== undefined &&
-    (Number(providedPrivacyData.gdprApplies) === 0 || providedPrivacyData.tcString)) {
-    callback({
-      tcString: providedPrivacyData.tcString,
-      gdprApplies: providedPrivacyData.gdprApplies,
-    }, true);
-    return;
-  }
-
+const getTCFData = callback => {
   if (!window.__tcfapi) {
     callback(undefined, false);
     return;
@@ -31,13 +21,7 @@ const getTCFData = (providedPrivacyData, callback) => {
   });
 };
 
-const getUSPData = (providedPrivacyData, callback) => {
-  // if privacy data was provided, pass it back
-  if (providedPrivacyData.uspString) {
-    callback({uspString: providedPrivacyData.uspString}, true);
-    return;
-  }
-
+const getUSPData = callback => {
   if (!window.__uspapi) {
     callback(undefined, false);
     return;
@@ -48,9 +32,9 @@ const getUSPData = (providedPrivacyData, callback) => {
   });
 };
 
-const getPrivacyData = (providedPrivacyData, callback) => {
-  getUSPData(providedPrivacyData, (uspData, uspDataSuccess) => {
-    getTCFData(providedPrivacyData, (tcfData, tcfDataSuccess) => {
+const getPrivacyData = callback => {
+  getUSPData((uspData, uspDataSuccess) => {
+    getTCFData((tcfData, tcfDataSuccess) => {
       callback({...uspData, ...tcfData}, uspDataSuccess && tcfDataSuccess);
     });
   });

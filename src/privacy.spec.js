@@ -5,21 +5,7 @@ import privacy from "./privacy";
 describe('privacy', () => {
 
   describe('getPrivacyData', () => {
-    it('should return provided values', done => {
-      privacy.getPrivacyData({
-        uspString: '1---',
-        tcString: 'abc',
-        gdprApplies: true
-      }, (privacyData, success) => {
-        expect(privacyData.uspString).toBe('1---');
-        expect(privacyData.tcString).toBe('abc');
-        expect(privacyData.gdprApplies).toBe(true);
-        expect(success).toBe(true);
-        done();
-      })
-    });
-
-    it('should return values from CMP if no values provided', done => {
+    it('should return values from CMP', done => {
       window.__tcfapi = (command, version, callback) => {
         callback({
           eventStatus: 'tcloaded',
@@ -33,7 +19,7 @@ describe('privacy', () => {
         }, true);
       };
 
-      privacy.getPrivacyData({}, (privacyData, success) => {
+      privacy.getPrivacyData((privacyData, success) => {
         expect(privacyData.uspString).toBe('1---');
         expect(privacyData.tcString).toBe('def');
         expect(privacyData.gdprApplies).toBe(true);
@@ -51,7 +37,7 @@ describe('privacy', () => {
       window.__uspapi = (command, version, callback) => {
         callback({}, false);
       };
-      privacy.getPrivacyData({}, (privacyData, success) => {
+      privacy.getPrivacyData((privacyData, success) => {
         expect(privacyData.uspString).toBeUndefined();
         expect(privacyData.tcString).toBeUndefined();
         expect(privacyData.gdprApplies).toBeUndefined();
