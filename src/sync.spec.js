@@ -89,6 +89,32 @@ describe('sync', () => {
       }, jasmine.anything());
     });
 
+    it('should pass privacy signals to api', () => {
+      window.__tcfapi = (command, version, callback) => {
+        callback({
+          eventStatus: 'tcloaded',
+          gdprApplies: true,
+          tcString: 'def'
+        }, true);
+      };
+      window.__uspapi = (command, version, callback) => {
+        callback({
+          uspString: '1---'
+        }, true);
+      };
+      spyOn(api, 'sendRequest');
+      sync.syncIds({
+        pixelId: 12345,
+        hashedEmail: MOCK_HASH_EMAIL,
+      });
+      expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
+        he: MOCK_HASH_EMAIL,
+        gdpr: true,
+        gdpr_consent: 'def',
+        us_privacy: '1---',
+      }, jasmine.anything());
+    })
+
     // cache response
 
     it('should cache connectid for hashedEmail', () => {
