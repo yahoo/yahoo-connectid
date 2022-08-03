@@ -52,7 +52,7 @@ sync.syncIds = ({
     return;
   }
 
-  privacy.getPrivacyData((privacyData, success) => {
+  privacy.getPrivacyData((privacyData) => {
     const localData = state.getLocalData();
     const latestHashedEmail = hashedEmail || localData.hashedEmail;
     const latestHashedPuid = hashedPuid || localData.hashedPuid;
