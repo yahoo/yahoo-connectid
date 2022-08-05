@@ -1,11 +1,11 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
 import sinon from 'sinon';
-import api from './api';
-import sync from './sync';
-import state from './state';
-import sha256 from "./sha256";
-import connectid from "./connectid";
+import api from '../api';
+import sync from '../sync';
+import state from '../state';
+import connectid from "../connectid";
+import {MOCK_GDPR_TCSTRING, mockPrivacySignals} from './mockPrivacySignals';
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 const MOCK_HASH_EMAIL = '7d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c91';
@@ -90,18 +90,7 @@ describe('sync', () => {
     });
 
     it('should pass privacy signals to api', () => {
-      window.__tcfapi = (command, version, callback) => {
-        callback({
-          eventStatus: 'tcloaded',
-          gdprApplies: true,
-          tcString: 'def'
-        }, true);
-      };
-      window.__uspapi = (command, version, callback) => {
-        callback({
-          uspString: '1---'
-        }, true);
-      };
+      mockPrivacySignals(false, '1---', true, true);
       spyOn(api, 'sendRequest');
       sync.syncIds({
         pixelId: 12345,
@@ -110,7 +99,7 @@ describe('sync', () => {
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
         he: MOCK_HASH_EMAIL,
         gdpr: true,
-        gdpr_consent: 'def',
+        gdpr_consent: MOCK_GDPR_TCSTRING,
         us_privacy: '1---',
       }, jasmine.anything());
     })

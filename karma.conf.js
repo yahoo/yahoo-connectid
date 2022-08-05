@@ -10,7 +10,7 @@ module.exports = function (config) {
     files: [
       'node_modules/fast-text-encoding/text.min.js',
       'node_modules/babel-polyfill/dist/polyfill.js',
-      {pattern: 'src/*.js', watched: true, served: true, included: true}
+      {pattern: 'src/test/*.js', watched: true, served: true, included: true}
       /*parameters:
           watched: if autoWatch is true all files that have set watched to true will be watched for changes
           served: should the files be served by Karma's webserver?
@@ -132,31 +132,6 @@ module.exports = function (config) {
           subdir: 'html'
         }
       },
-
-      // enforce percentage thresholds
-      // anything under these percentages will cause karma to fail with an exit code of 1 if not running in watch mode
-      thresholds: {
-        emitWarning: true, // set to `true` to not fail the test command when thresholds are not met
-        // thresholds for all files
-        global: {
-          statements: 100,
-          lines: 100,
-          branches: 100,
-          functions: 100
-        },
-        // thresholds per file
-        each: {
-          statements: 100,
-          lines: 100,
-          branches: 100,
-          functions: 100,
-          overrides: {
-            'baz/component/**/*.js': {
-              statements: 98
-            }
-          }
-        }
-      }
     }
 
   });
