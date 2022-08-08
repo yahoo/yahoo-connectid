@@ -50,7 +50,7 @@ const getPrivacyData = callback => {
     }
 
     getTCFData((tcfDataSuccess, gdprApplies, tcString, purpose1) => {
-      if (gdprApplies && !purpose1) {
+      if (!tcfDataSuccess || (gdprApplies && !purpose1)) {
         callback({optOut: true});
         return;
       }

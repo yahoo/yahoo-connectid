@@ -79,17 +79,36 @@
                         <span class="input-name">puid:</span>
                         <input id="puid"/>
                     </div>
+
                     <div class="input">
-                        <span class="input-name">Privacy Preference:</span>
-                        <select id="privacy" value="none">
-                            <option value="none">No privacy signals</option>
-                            <option value="usp_allowed">US Privacy (not opted-out)</option>
-                            <option value="usp_notallowed">US Privacy (opted-out)</option>
-                            <option value="gdpr_allowed">GDPR (opted-in)</option>
-                            <option value="gdpr_notallowed">GDPR (not opted-in)</option>
-                            <option value="local_notallowed">Locally opted out</option>
+                        <span class="input-name">Local Opt-out:</span>
+                        <select id="privacy_local">
+                            <option value="allowed">Allowed</option>
+                            <option value="not_allowed">Not Allowed</option>
+                            <option value="unavailable" selected>Unavailable</option>
                         </select>
                     </div>
+
+                    <div class="input">
+                        <span class="input-name">US Privacy:</span>
+                        <select id="privacy_usp">
+                            <option value="does_not_apply" selected>Does not apply</option>
+                            <option value="allowed">Allowed</option>
+                            <option value="not_allowed">Not Allowed</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+
+                    <div class="input">
+                        <span class="input-name">GDPR Opt-out:</span>
+                        <select id="privacy_gdpr">
+                            <option value="does_not_apply" selected>Does not apply</option>
+                            <option value="allowed">Allowed</option>
+                            <option value="not_allowed">Not Allowed</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+
                 </td>
                 <td id="getIdsResponse"/>
                 <td id="localStorageData"/>
