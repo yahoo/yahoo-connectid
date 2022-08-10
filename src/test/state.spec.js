@@ -86,7 +86,7 @@ describe('state', () => {
       const expectedStoredValue = {
         hashedEmail: 'def',
         connectid: 'def_connectid',
-        expires: Date.now() + 15 * 24 * 60 * 60 * 1000,
+        expires: Date.now() + 24 * 60 * 60 * 1000,
       };
 
       state.setConnectId(mockState);
