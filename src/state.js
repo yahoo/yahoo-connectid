@@ -55,7 +55,10 @@ const setConnectId = (data = {}) => {
 };
 
 const clear = () => {
-  localStorage.removeItem(LOCALSTORAGE_KEY);
+  try {
+    localStorage.removeItem(LOCALSTORAGE_KEY);
+  } catch (e) {
+  }
 };
 
 export default {

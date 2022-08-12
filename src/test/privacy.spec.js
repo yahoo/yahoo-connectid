@@ -10,7 +10,6 @@ describe('privacy', () => {
       mockPrivacySignals(false, '1---', true, true);
 
       privacy.getPrivacyData((privacyData) => {
-        expect(privacyData.optOut).toBe(false);
         expect(privacyData.uspString).toBe('1---');
         expect(privacyData.tcString).toBe(MOCK_GDPR_TCSTRING);
         expect(privacyData.gdprApplies).toBe(true);
@@ -22,7 +21,6 @@ describe('privacy', () => {
       mockPrivacySignals();
 
       privacy.getPrivacyData((privacyData) => {
-        expect(privacyData.optOut).toBe(true);
         expect(privacyData.uspString).toBeUndefined();
         expect(privacyData.tcString).toBeUndefined();
         expect(privacyData.gdprApplies).toBeUndefined();

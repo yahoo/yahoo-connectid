@@ -1,9 +1,19 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
-import privacy from './privacy';
 import sha256 from './sha256';
 import state from './state';
 import sync from './sync';
+
+const isLocallyOptedOut = () => {
+  try {
+    const localOptOut = window.localStorage.getItem('connectIdOptOut');
+    const prebidOptOut1 = window.localStorage.getItem('_pbjs_id_optout');
+    const prebidOptOut2 = window.localStorage.getItem('_pubcid_optout');
+    return localOptOut === '1' || prebidOptOut1 || prebidOptOut2;
+  } catch (e) {
+    return false;
+  }
+};
 
 /**
  * Provides locally stored IDs mapped to the provided email.  Currently, only the ConnectID is supported, however
@@ -13,22 +23,20 @@ import sync from './sync';
  * @param {string?} email - (optional) A raw or hashed email.  An email is determined to be raw if it contains
  * @param {string?} puid - (optional) Publisher's user identifier
  * an "@" character.  If no email is provided, the most recently provided email will be used.
- * @param {boolean} yahoo1p - true if used in a Yahoo O&O page, otherwise false
+ * @param {boolean?} yahoo1p - true if used in a Yahoo O&O page, otherwise false
  * @param {Function} callback - (required)
  */
 const getIds = ({pixelId, email, puid, yahoo1p}, callback) => {
-  privacy.getPrivacyData(({optOut, ...privacyData}) => {
-    if (optOut) {
-      state.clear();
-      callback({});
-      return;
-    }
+  if (isLocallyOptedOut()) {
+    state.clear();
+    callback({});
+    return;
+  }
 
-    sha256.getHashedIdentifier(email, hashedEmail => {
-      sha256.getHashedIdentifier(puid, hashedPuid => {
-        sync.syncIds({pixelId, hashedEmail, hashedPuid, ...privacyData});
-        callback(state.getConnectId({hashedEmail, hashedPuid}));
-      });
+  sha256.getHashedIdentifier(email, hashedEmail => {
+    sha256.getHashedIdentifier(puid, hashedPuid => {
+      sync.syncIds({pixelId, hashedEmail, hashedPuid});
+      callback(state.getConnectId({hashedEmail, hashedPuid}));
     });
   });
 };

@@ -10,8 +10,7 @@ const getTCFData = callback => {
     if (!success || response.cmpStatus === 'error') {
       callback(false);
     } else if (response.eventStatus === 'tcloaded' || response.eventStatus === 'useractioncomplete') {
-      const purpose1 = response.purpose && response.purpose.consents && response.purpose.consents[1];
-      callback(true, response.gdprApplies, response.tcString, purpose1);
+      callback(true, response.gdprApplies, response.tcString);
     }
   });
 };
@@ -27,34 +26,10 @@ const getUSPData = callback => {
   });
 };
 
-const getLocalOptOut = () => {
-  let optOut = false;
-  try {
-    optOut = window.localStorage.getItem('connectIdOptOut');
-  } catch (e) {
-  }
-  return optOut === '1';
-};
-
 const getPrivacyData = callback => {
-  const localOptOut = getLocalOptOut();
-  if (localOptOut) {
-    callback({optOut: true});
-    return;
-  }
-
   getUSPData((uspDataSuccess, uspString) => {
-    if (!uspDataSuccess || uspString[2] === 'Y') {
-      callback({optOut: true});
-      return;
-    }
-
-    getTCFData((tcfDataSuccess, gdprApplies, tcString, purpose1) => {
-      if (!tcfDataSuccess || (gdprApplies && !purpose1)) {
-        callback({optOut: true});
-        return;
-      }
-      callback({optOut: false, uspString, gdprApplies, tcString});
+    getTCFData((tcfDataSuccess, gdprApplies, tcString) => {
+      callback({uspString, gdprApplies, tcString});
     });
   });
 };

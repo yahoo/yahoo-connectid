@@ -26,7 +26,7 @@ describe('connectid', () => {
 
     // opt-out
 
-    it('should clear local cache if connectIdOptOut is 1', () => {
+    it('should clear local cache if connectIdOptOut is set', () => {
       mockPrivacySignals(true);
       const state = {
         "hashedEmail": "abc",
@@ -35,6 +35,32 @@ describe('connectid', () => {
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('connectIdOptOut', '1');
+      connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
+      expect(window.localStorage.getItem('yahoo-connectid')).toBe(null);
+    });
+
+    it('should clear local cache if _pbjs_id_optout is set', () => {
+      mockPrivacySignals(true);
+      const state = {
+        "hashedEmail": "abc",
+        "connectid": "abc_connectid",
+        "expires": 1596026151361
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+      window.localStorage.setItem('_pbjs_id_optout', '1');
+      connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
+      expect(window.localStorage.getItem('yahoo-connectid')).toBe(null);
+    });
+
+    it('should clear local cache if _pubcid_optout is set', () => {
+      mockPrivacySignals(true);
+      const state = {
+        "hashedEmail": "abc",
+        "connectid": "abc_connectid",
+        "expires": 1596026151361
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+      window.localStorage.setItem('_pubcid_optout', '1');
       connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
       expect(window.localStorage.getItem('yahoo-connectid')).toBe(null);
     });
@@ -109,9 +135,6 @@ describe('connectid', () => {
           pixelId: 12345,
           hashedEmail: MOCK_HASH_VALUE,
           hashedPuid: undefined,
-          uspString: '1---',
-          gdprApplies: false,
-          tcString: undefined,
         });
         done();
       });
@@ -126,9 +149,6 @@ describe('connectid', () => {
           pixelId: 12345,
           hashedEmail: undefined,
           hashedPuid: MOCK_HASH_VALUE,
-          uspString: '1---',
-          gdprApplies: false,
-          tcString: undefined,
         });
         done();
       });
@@ -155,9 +175,6 @@ describe('connectid', () => {
             pixelId: 12345,
             hashedEmail: MOCK_HASH_VALUE,
             hashedPuid: undefined,
-            uspString: '1---',
-            gdprApplies: false,
-            tcString: undefined,
           }
         );
         done();
