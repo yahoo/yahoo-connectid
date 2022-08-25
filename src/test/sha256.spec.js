@@ -1,6 +1,6 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
-import sha256 from './sha256';
+import sha256 from '../sha256';
 
 describe('sha256', () => {
   describe('getHashedIdentifier', () => {

@@ -40,27 +40,19 @@ const sync = {};
  * @param {number} pixelId - (required) pixel id
  * @param {string} hashedEmail - (optional) hashed email.  hashedEmail or hashedPuid must be provided
  * @param {string} hashedPuid - (optional) publisher user identifier. hashedEmail or hashedPuid must be provided
- * @param {boolean} gdpr - (required) true if GDPR applies, otherwise false
- * @param {string?} gdprConsent - (optional) GDPR consent string.  Required if GDPR applies.
- * @param {string?} usPrivacy - (optional)
  * @param {boolean} yahoo1p - true if used in a Yahoo O&O page, otherwise false
  */
 sync.syncIds = ({
   pixelId,
   hashedEmail,
   hashedPuid,
-  gdpr: gdprApplies,
-  gdprConsent: tcString,
-  usPrivacy: uspString,
   yahoo1p,
 }) => {
   if (!shouldSync({pixelId, hashedEmail, hashedPuid})) {
     return;
   }
 
-  const providedPrivacyData = {gdprApplies, tcString, uspString};
-
-  privacy.getPrivacyData(providedPrivacyData, (privacyData, success) => {
+  privacy.getPrivacyData((privacyData) => {
     const localData = state.getLocalData();
     const latestHashedEmail = hashedEmail || localData.hashedEmail;
     const latestHashedPuid = hashedPuid || localData.hashedPuid;

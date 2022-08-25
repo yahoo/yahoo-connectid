@@ -1,6 +1,6 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
-import state from './state';
+import state from '../state';
 import sinon from "sinon";
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
@@ -86,7 +86,7 @@ describe('state', () => {
       const expectedStoredValue = {
         hashedEmail: 'def',
         connectid: 'def_connectid',
-        expires: Date.now() + 15 * 24 * 60 * 60 * 1000,
+        expires: Date.now() + 24 * 60 * 60 * 1000,
       };
 
       state.setConnectId(mockState);

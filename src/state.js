@@ -1,6 +1,6 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
-const DEFAULT_TTL = 15 * 24; // 15 days (in hours)
+const DEFAULT_TTL = 24; // 24 HOURS
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 
 const pick = function (obj, props) {
@@ -55,7 +55,10 @@ const setConnectId = (data = {}) => {
 };
 
 const clear = () => {
-  localStorage.removeItem(LOCALSTORAGE_KEY);
+  try {
+    localStorage.removeItem(LOCALSTORAGE_KEY);
+  } catch (e) {
+  }
 };
 
 export default {

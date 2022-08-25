@@ -1,11 +1,11 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
 import sinon from 'sinon';
-import api from './api';
-import sync from './sync';
-import state from './state';
-import sha256 from "./sha256";
-import connectid from "./connectid";
+import api from '../api';
+import sync from '../sync';
+import state from '../state';
+import connectid from "../connectid";
+import {MOCK_GDPR_TCSTRING, mockPrivacySignals} from './mockPrivacySignals';
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 const MOCK_HASH_EMAIL = '7d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c91';
@@ -41,9 +41,6 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       connectid.getIds({
         pixelId: 12345,
-        gdpr: true,
-        gdprConsent: 'C012345',
-        usPrivacy: '1---',
         yahoo1p: true
       }, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
@@ -55,9 +52,6 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       connectid.getIds({
         hashedEmail: MOCK_HASH_EMAIL,
-        gdpr: true,
-        gdprConsent: 'C012345',
-        usPrivacy: '1---',
         yahoo1p: true
       }, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
@@ -86,20 +80,29 @@ describe('sync', () => {
         pixelId: 12345,
         hashedEmail: MOCK_HASH_EMAIL,
         hashedPuid: MOCK_HASH_PUID,
-        gdpr: 1,
-        gdprConsent: 'consent',
-        usPrivacy: '1---',
         yahoo1p: true
       });
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
         he: MOCK_HASH_EMAIL,
         puid: MOCK_HASH_PUID,
-        gdpr: 1,
-        gdpr_consent: 'consent',
-        us_privacy: '1---',
         '1p': true,
       }, jasmine.anything());
     });
+
+    it('should pass privacy signals to api', () => {
+      mockPrivacySignals(false, '1---', true, true);
+      spyOn(api, 'sendRequest');
+      sync.syncIds({
+        pixelId: 12345,
+        hashedEmail: MOCK_HASH_EMAIL,
+      });
+      expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
+        he: MOCK_HASH_EMAIL,
+        gdpr: true,
+        gdpr_consent: MOCK_GDPR_TCSTRING,
+        us_privacy: '1---',
+      }, jasmine.anything());
+    })
 
     // cache response
 
