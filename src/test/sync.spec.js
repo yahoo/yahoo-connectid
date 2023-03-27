@@ -33,7 +33,9 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       sync.syncIds({pixelId: 12345, hashedEmail: MOCK_HASH_EMAIL});
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
-        he: MOCK_HASH_EMAIL
+        he: MOCK_HASH_EMAIL,
+        v: 1,
+        url: 'http://localhost:9876/context.html',
       }, jasmine.anything());
     });
 
@@ -86,6 +88,8 @@ describe('sync', () => {
         he: MOCK_HASH_EMAIL,
         puid: MOCK_HASH_PUID,
         '1p': true,
+        v: 1,
+        url: 'http://localhost:9876/context.html',
       }, jasmine.anything());
     });
 
@@ -101,6 +105,8 @@ describe('sync', () => {
         gdpr: true,
         gdpr_consent: MOCK_GDPR_TCSTRING,
         us_privacy: '1---',
+        v: 1,
+        url: 'http://localhost:9876/context.html',
       }, jasmine.anything());
     })
 

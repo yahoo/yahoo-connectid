@@ -66,6 +66,8 @@ sync.syncIds = ({
       ...privacyData.tcString !== undefined ? {gdpr_consent: privacyData.tcString} : {},
       ...privacyData.uspString !== undefined ? {us_privacy: privacyData.uspString} : {},
       ...yahoo1p !== undefined ? {'1p': yahoo1p} : {},
+      v: 1,
+      url: location.protocol + '//' + location.host + location.pathname,
     };
 
     api.sendRequest(url, data, response => {
