@@ -35,7 +35,7 @@ const getIds = ({pixelId, email, puid, yahoo1p}, callback) => {
 
   sha256.getHashedIdentifier(email, hashedEmail => {
     sha256.getHashedIdentifier(puid, hashedPuid => {
-      sync.syncIds({pixelId, hashedEmail, hashedPuid});
+      sync.syncIds({pixelId, hashedEmail, hashedPuid, yahoo1p});
       callback(state.getConnectId({hashedEmail, hashedPuid}));
     });
   });

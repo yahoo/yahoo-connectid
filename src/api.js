@@ -8,13 +8,13 @@
  * @param {Function} callback - (required) Called when API responds
  */
 export const sendRequest = (url, data, callback) => {
-  let xhr = new XMLHttpRequest();
+  const xhr = new XMLHttpRequest();
 
-  let params = Object.keys(data)
-    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
+  const params = Object.keys(data)
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(data[k])}`)
     .join('&');
 
-  xhr.onreadystatechange = function (e) {
+  xhr.onreadystatechange = () => {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       if (xhr.status === 0 || (xhr.status >= 200 && xhr.status < 400)) {
         try {
@@ -33,6 +33,7 @@ export const sendRequest = (url, data, callback) => {
     xhr.open('GET', `${url}?${params}`, true);
     xhr.send(data);
   } catch (e) {
+    // ignore
   }
 };
 

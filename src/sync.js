@@ -1,6 +1,6 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
-import state from "./state";
+import state from './state';
 import api from './api';
 import privacy from './privacy';
 
@@ -28,8 +28,8 @@ const shouldSync = ({pixelId, hashedEmail, hashedPuid}) => {
   const hashedPuidExists = hashedPuid || cachedHashedPuid;
   const hashedEmailChanged = hashedEmail && hashedEmail !== cachedHashedEmail;
   const hashedPuidChanged = hashedPuid && hashedPuid !== cachedHashedPuid;
-  return (hashedEmailExists || hashedPuidExists) &&
-    (hashedEmailChanged || hashedPuidChanged || isStale(expires));
+  return (hashedEmailExists || hashedPuidExists)
+    && (hashedEmailChanged || hashedPuidChanged || isStale(expires));
 };
 
 const sync = {};
@@ -59,6 +59,7 @@ sync.syncIds = ({
 
     // call UPS to get connectid
     const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
+    const {protocol, host, pathname} = window.location;
     const data = {
       ...latestHashedEmail ? {he: latestHashedEmail} : {},
       ...latestHashedPuid ? {puid: latestHashedPuid} : {},
@@ -67,7 +68,7 @@ sync.syncIds = ({
       ...privacyData.uspString !== undefined ? {us_privacy: privacyData.uspString} : {},
       ...yahoo1p !== undefined ? {'1p': yahoo1p} : {},
       v: 1,
-      url: location.protocol + '//' + location.host + location.pathname,
+      url: `${protocol}//${host}${pathname}`,
     };
 
     api.sendRequest(url, data, response => {

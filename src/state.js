@@ -3,7 +3,7 @@
 const DEFAULT_TTL = 24; // 24 HOURS
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 
-const pick = function (obj, props) {
+const pick = (obj, props) => {
   if (!obj || !props) return {};
   const picked = {};
   props.forEach(prop => {
@@ -31,11 +31,13 @@ const getLocalData = () => {
 const getConnectId = ({hashedEmail, hashedPuid} = {}) => {
   const localData = getLocalData();
   // if no ids provided or any id matches, return connectid
-  if ((!hashedEmail && !hashedPuid) ||
-    !hashedEmail && !!localData.hashedEmail ||
-    hashedEmail && hashedEmail === localData.hashedEmail ||
-    !hashedPuid && !!localData.hashedPuid ||
-    hashedPuid && hashedPuid === localData.hashedPuid) {
+  if (
+    (!hashedEmail && !hashedPuid)
+    || (!hashedEmail && !!localData.hashedEmail)
+    || (hashedEmail && hashedEmail === localData.hashedEmail)
+    || (!hashedPuid && !!localData.hashedPuid)
+    || (hashedPuid && hashedPuid === localData.hashedPuid)
+  ) {
     return pick(localData, ['connectid']);
   }
   return {};
@@ -47,10 +49,11 @@ const setConnectId = (data = {}) => {
     ...pick(getLocalData(), ['hashedEmail', 'hashedPuid']),
     ...pick(data, ['hashedEmail', 'hashedPuid', 'connectid']),
     expires,
-  }
+  };
   try {
     localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(updatedData));
   } catch (e) {
+    // ignore
   }
 };
 
@@ -58,6 +61,7 @@ const clear = () => {
   try {
     localStorage.removeItem(LOCALSTORAGE_KEY);
   } catch (e) {
+    // ignore
   }
 };
 

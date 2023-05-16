@@ -16,7 +16,7 @@ const computeHash = (str, callback) => {
     const msgBuffer = new TextEncoder('utf-8').encode(str.trim().toLowerCase());
     crypto.subtle.digest('SHA-256', msgBuffer).then(hashBuffer => {
       const hashArray = Array.from(new Uint8Array(hashBuffer));
-      callback(hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join(''));
+      callback(hashArray.map(b => (`00${b.toString(16)}`).slice(-2)).join(''));
     });
   }
 };
@@ -43,7 +43,6 @@ const getHashedIdentifier = (identifier, callback) => {
     computeHash(identifier, callback);
   }
 };
-
 
 export default {
   getHashedIdentifier,

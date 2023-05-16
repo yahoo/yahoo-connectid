@@ -9,10 +9,15 @@
     "start": "webpack-dev-server --mode development --open",
     "test": "karma start",
     "ci-test": "karma start",
-    "docs": "mkdir -p docs && cp dist/demo.html docs/index.html"
+    "docs": "mkdir -p docs && cp dist/demo.html docs/index.html",
+    "lint": "npx eslint './src/**/*.{js,jsx,json,spec.js}' --max-warnings=0",
+    "lint:fix": "npx eslint './src/**/*.{js,jsx,json,spec.js}' --max-warnings=0 --fix"
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "jquery": "^3.5.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/plugin-transform-runtime": "^7.12.1",
@@ -22,9 +27,11 @@
     "babel-polyfill": "^6.26.0",
     "core-js": "^3.6.5",
     "coverage-istanbul-loader": "^3.0.5",
+    "eslint": "^8.40.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5",
     "fast-text-encoding": "^1.0.3",
     "html-webpack-plugin": "4.5.0",
-    "jquery": "^3.5.1",
     "karma-coverage-istanbul-reporter": "^3.0.3",
     "react-dev-utils": "^11.0.0",
     "sinon": "^9.2.0",
