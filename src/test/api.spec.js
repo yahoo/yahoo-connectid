@@ -1,32 +1,33 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
-import api from '../api';
 import sinon from 'sinon';
+import api from '../api';
 
 describe('api', () => {
   describe('sendRequest', () => {
-    let xhr, requests;
+    let xhr; let
+      requests;
 
-    beforeEach(function () {
+    beforeEach(() => {
       xhr = sinon.useFakeXMLHttpRequest();
       requests = [];
-      xhr.onCreate = function (req) {
+      xhr.onCreate = req => {
         requests.push(req);
       };
     });
 
-    afterEach(function () {
+    afterEach(() => {
       xhr.restore();
     });
 
-    it("should call UPS to fetch ConnectID", function () {
+    it('should call UPS to fetch ConnectID', () => {
       api.sendRequest('mock_url', {he: 'abc'}, sinon.fake());
 
       expect(requests.length).toBe(1);
       expect(requests[0].url).toBe('mock_url?he=abc');
     });
 
-    it("should call UPS to fetch ConnectID when no hashed email is provided", function () {
+    it('should call UPS to fetch ConnectID when no hashed email is provided', () => {
       api.sendRequest('mock_url', {}, sinon.fake());
 
       expect(requests.length).toBe(1);
@@ -41,8 +42,8 @@ describe('api', () => {
 
       requests[0].respond(
         200,
-        {"Content-Type": "application/json"},
-        '{"connectid": "fake_ connectid"}'
+        {'Content-Type': 'application/json'},
+        '{"connectid": "fake_ connectid"}',
       );
     });
 
@@ -54,7 +55,5 @@ describe('api', () => {
 
       requests[0].respond(400);
     });
-
   });
-
 });

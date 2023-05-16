@@ -21,7 +21,7 @@ const getUSPData = callback => {
     return;
   }
 
-  window.__uspapi('getUSPData', null, (response, success) => {
+  window.__uspapi('getUSPData', null, (response) => {
     callback(true, response.uspString);
   });
 };
@@ -35,5 +35,5 @@ const getPrivacyData = callback => {
 };
 
 export default {
-  getPrivacyData
+  getPrivacyData,
 };

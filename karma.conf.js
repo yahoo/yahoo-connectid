@@ -30,9 +30,9 @@ module.exports = function (config) {
     //list of frameworks you want to use, only jasmine is installed with this boilerplate
     frameworks: ['jasmine'],
     //list of browsers to launch and capture
-    browsers: ['PhantomJS'/* ,'Chrome','Firefox','Edge','ChromeCanary','Opera','IE','Safari'*/],
+    browsers: ['MyHeadlessChrome'],
     //list of reporters to use
-    reporters: ['mocha', 'kjhtml', 'coverage-istanbul'/*,'dots','progress','spec'*/],
+    reporters: ['mocha', 'coverage-istanbul'/*,'dots','progress','spec'*/],
 
     //address that the server will listen on, '0.0.0.0' is default
     listenAddress: '0.0.0.0',
@@ -48,6 +48,15 @@ module.exports = function (config) {
     browserNoActivityTimeout: 10000,
     //timeout for capturing a browser, 60000 is default
     captureTimeout: 60000,
+
+    // Those definitions are for BrowserStack.
+    customLaunchers: {
+      MyHeadlessChrome: {
+        base: 'ChromeHeadless',
+        flags: ['--disable-translate', '--disable-extensions', '--remote-debugging-port=9223',
+          '--no-sandbox']
+      }
+    },
 
     client: {
       //capture all console output and pipe it to the terminal, true is default

@@ -9,12 +9,12 @@ describe('sha256', () => {
       const testStrings = [
         {
           raw: 'abc',
-          hashed: 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'
+          hashed: 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',
         },
         {
           raw: 'test@foo.com',
-          hashed: '899d3387a5c5a7555d51d2f0a0b7b50e397fe481fd9a58fafb389b7dc94e11f6'
-        }
+          hashed: '899d3387a5c5a7555d51d2f0a0b7b50e397fe481fd9a58fafb389b7dc94e11f6',
+        },
       ];
 
       sha256.getHashedIdentifier(testStrings[0].raw, hash1 => {

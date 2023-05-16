@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import api from '../api';
 import sync from '../sync';
 import state from '../state';
-import connectid from "../connectid";
+import connectid from '../connectid';
 import {MOCK_GDPR_TCSTRING, mockPrivacySignals} from './mockPrivacySignals';
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
@@ -43,7 +43,7 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       connectid.getIds({
         pixelId: 12345,
-        yahoo1p: true
+        yahoo1p: true,
       }, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
       });
@@ -54,7 +54,7 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       connectid.getIds({
         hashedEmail: MOCK_HASH_EMAIL,
-        yahoo1p: true
+        yahoo1p: true,
       }, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
       });
@@ -62,12 +62,11 @@ describe('sync', () => {
     });
 
     it('should not call api if local data is available and not stale', done => {
-      const state = {
-        "hashedEmail": MOCK_HASH_EMAIL,
-        "connectid": "abc_connectid",
-        "expires": Date.now() + 1000,
-      };
-      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify({
+        hashedEmail: MOCK_HASH_EMAIL,
+        connectid: 'abc_connectid',
+        expires: Date.now() + 1000,
+      }));
 
       spyOn(api, 'sendRequest');
       connectid.getIds({pixelId: 123, email: MOCK_HASH_EMAIL}, () => {
@@ -82,7 +81,7 @@ describe('sync', () => {
         pixelId: 12345,
         hashedEmail: MOCK_HASH_EMAIL,
         hashedPuid: MOCK_HASH_PUID,
-        yahoo1p: true
+        yahoo1p: true,
       });
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
         he: MOCK_HASH_EMAIL,
@@ -108,7 +107,7 @@ describe('sync', () => {
         v: 1,
         url: 'http://localhost:9876/context.html',
       }, jasmine.anything());
-    })
+    });
 
     // cache response
 
@@ -124,7 +123,7 @@ describe('sync', () => {
           connectid: MOCK_CONNECTID,
           hashedEmail: MOCK_HASH_EMAIL,
           ttl: 24,
-        }
+        },
       );
     });
 
@@ -140,7 +139,7 @@ describe('sync', () => {
           connectid: MOCK_CONNECTID,
           hashedPuid: MOCK_HASH_PUID,
           ttl: 24,
-        }
+        },
       );
     });
 
@@ -157,7 +156,7 @@ describe('sync', () => {
           hashedEmail: MOCK_HASH_EMAIL,
           hashedPuid: MOCK_HASH_PUID,
           ttl: 24,
-        }
+        },
       );
     });
 
@@ -173,9 +172,8 @@ describe('sync', () => {
           hashedEmail: MOCK_HASH_EMAIL,
           connectid: undefined,
           ttl: undefined,
-        }
+        },
       );
     });
   });
 });
-

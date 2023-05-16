@@ -17,7 +17,7 @@ export const mockPrivacySignals = (localOptout, uspString, gdprApplies, purpose1
 
   if (gdprApplies !== undefined) {
     window.__tcfapi = (command, version, callback) => {
-      let response = {
+      const response = {
         eventStatus: 'tcloaded',
         gdprApplies,
       };
@@ -25,7 +25,7 @@ export const mockPrivacySignals = (localOptout, uspString, gdprApplies, purpose1
         response.tcString = MOCK_GDPR_TCSTRING;
         response.purpose = {
           consents: {
-            '1': purpose1,
+            1: purpose1,
           },
         };
       }
