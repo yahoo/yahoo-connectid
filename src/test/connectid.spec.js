@@ -13,6 +13,9 @@ const mockGetHashedIdentifier = (id, callback) => {
   callback(id ? MOCK_HASH_VALUE : id);
 };
 
+const noop = () => {
+};
+
 describe('connectid', () => {
   describe('getIds', () => {
 
@@ -35,7 +38,7 @@ describe('connectid', () => {
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('connectIdOptOut', '1');
-      connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
+      connectid.getIds({pixelId: 123, email: 'abc'}, noop);
       expect(window.localStorage.getItem('yahoo-connectid')).toBe(null);
     });
 
@@ -48,7 +51,7 @@ describe('connectid', () => {
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('_pbjs_id_optout', '1');
-      connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
+      connectid.getIds({pixelId: 123, email: 'abc'}, noop);
       expect(window.localStorage.getItem('yahoo-connectid')).toBe(null);
     });
 
@@ -61,7 +64,7 @@ describe('connectid', () => {
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('_pubcid_optout', '1');
-      connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
+      connectid.getIds({pixelId: 123, email: 'abc'}, noop);
       expect(window.localStorage.getItem('yahoo-connectid')).toBe(null);
     });
 
@@ -74,7 +77,7 @@ describe('connectid', () => {
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('connectIdOptOut', '2');
-      connectid.getIds({pixelId: 123, email: 'abc'}, () => {});
+      connectid.getIds({pixelId: 123, email: 'abc'}, noop);
       expect(window.localStorage.getItem('yahoo-connectid')).not.toBe(null);
     });
 
@@ -101,14 +104,15 @@ describe('connectid', () => {
 
     it('should return stored user state', done => {
       mockPrivacySignals(false, '1---', false);
+      const he = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
       const state = {
-        "hashedEmail": "abc",
+        "hashedEmail": he,
         "connectid": "abc_connectid",
         "expires": 1596026151361,
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
 
-      connectid.getIds({pixelId: 12345, email: 'abc'}, response => {
+      connectid.getIds({pixelId: 12345, email: he}, response => {
         expect(response).toEqual({
           connectid: 'abc_connectid'
         });
@@ -155,12 +159,15 @@ describe('connectid', () => {
     });
 
     it('should fail gracefully when hashing if browser does not support crypto', done => {
+      const crypto = window.crypto;
+      window.__defineGetter__('crypto', () => null);
       mockPrivacySignals(false, '1---', false);
       spyOn(api, 'sendRequest');
       connectid.getIds({pixelId: 12345, email: 'abc@foo.com'}, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
         done();
       });
+      window.__defineGetter__('crypto', () => crypto);
     });
 
     // syncing
