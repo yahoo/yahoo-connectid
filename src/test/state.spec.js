@@ -7,7 +7,7 @@ const LOCALSTORAGE_KEY = 'yahoo-connectid';
 const MOCK_HASH_EMAIL = '7d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c91';
 const MOCK_HASH_PUID = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
 const MOCK_HASH_PUID_ALT = '9d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c93';
-const MOCK_CONNECTID = 'mock-connectid';
+const MOCK_CONNECTID = 'mock-connectId';
 
 describe('state', () => {
   const now = new Date();
@@ -29,63 +29,63 @@ describe('state', () => {
     });
 
     it('should return empty object if no state is stored for provided email', () => {
-      expect(state.getConnectId({hashedEmail: MOCK_HASH_EMAIL})).toEqual({});
+      expect(state.getConnectId({he: MOCK_HASH_EMAIL})).toEqual({});
     });
 
     it('should return stored state for specified email', () => {
       const mockState = {
-        hashedEmail: MOCK_HASH_EMAIL,
-        connectid: MOCK_CONNECTID,
+        he: MOCK_HASH_EMAIL,
+        connectId: MOCK_CONNECTID,
       };
 
       const expectedResult = {
-        connectid: MOCK_CONNECTID,
+        connectId: MOCK_CONNECTID,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId({hashedEmail: MOCK_HASH_EMAIL})).toEqual(expectedResult);
+      expect(state.getConnectId({he: MOCK_HASH_EMAIL})).toEqual(expectedResult);
     });
 
     it('should return stored state for specified puid', () => {
       const mockState = {
-        hashedPuid: MOCK_HASH_PUID,
-        connectid: MOCK_CONNECTID,
+        puid: MOCK_HASH_PUID,
+        connectId: MOCK_CONNECTID,
       };
 
       const expectedResult = {
-        connectid: MOCK_CONNECTID,
+        connectId: MOCK_CONNECTID,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId({hashedPuid: MOCK_HASH_PUID})).toEqual(expectedResult);
+      expect(state.getConnectId({puid: MOCK_HASH_PUID})).toEqual(expectedResult);
     });
 
     it('should return stored state if cached email exists but none passed in', () => {
       const mockState = {
-        hashedEmail: MOCK_HASH_EMAIL,
-        hashedPuid: MOCK_HASH_PUID,
-        connectid: MOCK_CONNECTID,
+        he: MOCK_HASH_EMAIL,
+        puid: MOCK_HASH_PUID,
+        connectId: MOCK_CONNECTID,
       };
 
       const expectedResult = {
-        connectid: MOCK_CONNECTID,
+        connectId: MOCK_CONNECTID,
       };
 
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId({hashedPuid: MOCK_HASH_PUID_ALT})).toEqual(expectedResult);
+      expect(state.getConnectId({puid: MOCK_HASH_PUID_ALT})).toEqual(expectedResult);
     });
   });
 
   describe('setLocalData', () => {
     it('should store state for specified user', () => {
       const mockState = {
-        connectid: 'def_connectid',
-        hashedEmail: 'def',
+        connectId: 'def_connectId',
+        he: 'def',
       };
 
       const expectedStoredValue = {
-        hashedEmail: 'def',
-        connectid: 'def_connectid',
+        he: 'def',
+        connectId: 'def_connectId',
         expires: Date.now() + 24 * 60 * 60 * 1000,
       };
 
@@ -95,16 +95,16 @@ describe('state', () => {
 
     it('should not throw an exception if invalid state is provided', () => {
       expect(() => {
-        state.setLocalData({hashedEmail: 'abc', connectid: null});
+        state.setLocalData({he: 'abc', connectId: null});
       }).not.toThrow();
       expect(() => {
-        state.setLocalData({hashedEmail: 'abc', connectid: 123});
+        state.setLocalData({he: 'abc', connectId: 123});
       }).not.toThrow();
       expect(() => {
-        state.setLocalData({hashedEmail: 'abc', connectid: true});
+        state.setLocalData({he: 'abc', connectId: true});
       }).not.toThrow();
       expect(() => {
-        state.setLocalData({hashedEmail: 'abc', connectid: undefined});
+        state.setLocalData({he: 'abc', connectId: undefined});
       }).not.toThrow();
       expect(() => {
         state.setLocalData({});

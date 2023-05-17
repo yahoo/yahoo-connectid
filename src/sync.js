@@ -12,24 +12,23 @@ import privacy from './privacy';
  */
 const isStale = ts => (!ts || new Date(ts).getTime() < Date.now());
 
-const shouldSync = ({pixelId, hashedEmail, hashedPuid}) => {
+const shouldSync = ({pixelId, he, puid}) => {
   // pixelId is required
   if (!pixelId) {
     return false;
   }
 
   const {
-    hashedEmail: cachedHashedEmail,
-    hashedPuid: cachedHashedPuid,
+    he: cachedHe,
+    puid: cachedPuid,
     expires,
   } = state.getLocalData();
 
-  const hashedEmailExists = hashedEmail || cachedHashedEmail;
-  const hashedPuidExists = hashedPuid || cachedHashedPuid;
-  const hashedEmailChanged = hashedEmail && hashedEmail !== cachedHashedEmail;
-  const hashedPuidChanged = hashedPuid && hashedPuid !== cachedHashedPuid;
-  return (hashedEmailExists || hashedPuidExists)
-    && (hashedEmailChanged || hashedPuidChanged || isStale(expires));
+  const heExists = he || cachedHe;
+  const puidExists = puid || cachedPuid;
+  const heChanged = he && he !== cachedHe;
+  const puidChanged = puid && puid !== cachedPuid;
+  return (heExists || puidExists) && (heChanged || puidChanged || isStale(expires));
 };
 
 const sync = {};
@@ -38,31 +37,31 @@ const sync = {};
  * Calls UPS endpoint to retrieve ConnectID, and stores the result in Local Storage
  *
  * @param {number} pixelId - (required) pixel id
- * @param {string} hashedEmail - (optional) hashed email.  hashedEmail or hashedPuid must be provided
- * @param {string} hashedPuid - (optional) publisher user identifier. hashedEmail or hashedPuid must be provided
+ * @param {string} he - (optional) hashed email.  he or puid must be provided
+ * @param {string} puid - (optional) publisher user identifier. he or puid must be provided
  * @param {boolean} yahoo1p - true if used in a Yahoo O&O page, otherwise false
  */
 sync.syncIds = ({
   pixelId,
-  hashedEmail,
-  hashedPuid,
+  he,
+  puid,
   yahoo1p,
 }) => {
-  if (!shouldSync({pixelId, hashedEmail, hashedPuid})) {
+  if (!shouldSync({pixelId, he, puid})) {
     return;
   }
 
   privacy.getPrivacyData((privacyData) => {
     const localData = state.getLocalData();
-    const latestHashedEmail = hashedEmail || localData.hashedEmail;
-    const latestHashedPuid = hashedPuid || localData.hashedPuid;
+    const latestHe = he || localData.he;
+    const latestPuid = puid || localData.puid;
 
-    // call UPS to get connectid
+    // call UPS to get connectId
     const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
     const {protocol, host, pathname} = window.location;
     const data = {
-      ...latestHashedEmail ? {he: latestHashedEmail} : {},
-      ...latestHashedPuid ? {puid: latestHashedPuid} : {},
+      ...latestHe ? {he: latestHe} : {},
+      ...latestPuid ? {puid: latestPuid} : {},
       ...privacyData.gdprApplies !== undefined ? {gdpr: privacyData.gdprApplies} : {},
       ...privacyData.tcString !== undefined ? {gdpr_consent: privacyData.tcString} : {},
       ...privacyData.uspString !== undefined ? {us_privacy: privacyData.uspString} : {},
@@ -74,9 +73,9 @@ sync.syncIds = ({
     api.sendRequest(url, data, response => {
       if (response) {
         state.setLocalData({
-          ...latestHashedEmail ? {hashedEmail: latestHashedEmail} : {},
-          ...latestHashedPuid ? {hashedPuid: latestHashedPuid} : {},
-          connectid: response.connectid,
+          ...latestHe ? {he: latestHe} : {},
+          ...latestPuid ? {puid: latestPuid} : {},
+          connectId: response.connectId,
           ttl: response.ttl,
         });
       }

@@ -27,7 +27,7 @@ describe('api', () => {
       expect(requests[0].url).toBe('mock_url?he=abc');
     });
 
-    it('should call UPS to fetch ConnectID when no hashed email is provided', () => {
+    it('should call UPS to fetch ConnectID when no he is provided', () => {
       api.sendRequest('mock_url', {}, sinon.fake());
 
       expect(requests.length).toBe(1);
@@ -36,14 +36,14 @@ describe('api', () => {
 
     it('should pass API response to callback', done => {
       api.sendRequest('mock url', {he: 'abc'}, response => {
-        expect(response.connectid).toBe('fake_ connectid');
+        expect(response.connectId).toBe('fake_connectId');
         done();
       });
 
       requests[0].respond(
         200,
         {'Content-Type': 'application/json'},
-        '{"connectid": "fake_ connectid"}',
+        '{"connectId": "fake_connectId"}',
       );
     });
 
