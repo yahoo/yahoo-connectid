@@ -60,8 +60,8 @@ const setPrivacyPreferences = (local, usp, gdpr) => {
 
 const renderLocalStorageData = () => {
   const json = window.localStorage.getItem(LOCALSTORAGE_KEY);
-  const data = JSON.stringify(JSON.parse(json));
-  $('#localStorageData').text(data);
+  const data = JSON.stringify(JSON.parse(json), null, 2);
+  $('#localStorageData pre').text(data);
 };
 
 const callGetIds = () => {
@@ -79,7 +79,7 @@ const callGetIds = () => {
   connectid.getIds(
     demoState,
     ids => {
-      document.getElementById('getIdsResponse').innerHTML = `${JSON.stringify(ids, null, 2)}`;
+      $('#getIdsResponse pre').text(`${JSON.stringify(ids, null, 2)}`);
     },
   );
 };
@@ -116,6 +116,6 @@ const callGetIds = () => {
     callGetIds();
   };
 
-  setInterval(renderLocalStorageData, 250);
+  setInterval(renderLocalStorageData, 500);
   callGetIds();
 })();

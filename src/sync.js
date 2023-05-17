@@ -4,13 +4,15 @@ import state from './state';
 import api from './api';
 import privacy from './privacy';
 
+const TTL = 24 * 60 * 60 * 1000;
+
 /**
- * Determines if a specified timestamp is stale (in the past).
+ * Determines if a specified timestamp is stale (older than TTL)
  *
  * @param {string} ts timestamp
  * @returns {boolean} true if stale, otherwise false
  */
-const isStale = ts => (!ts || new Date(ts).getTime() < Date.now());
+const isStale = ts => (!ts || (new Date(ts).getTime() + TTL) < Date.now());
 
 const shouldSync = ({pixelId, he, puid}) => {
   // pixelId is required
@@ -21,14 +23,14 @@ const shouldSync = ({pixelId, he, puid}) => {
   const {
     he: cachedHe,
     puid: cachedPuid,
-    expires,
+    lastSynced,
   } = state.getLocalData();
 
   const heExists = he || cachedHe;
   const puidExists = puid || cachedPuid;
   const heChanged = he && he !== cachedHe;
   const puidChanged = puid && puid !== cachedPuid;
-  return (heExists || puidExists) && (heChanged || puidChanged || isStale(expires));
+  return (heExists || puidExists) && (heChanged || puidChanged || isStale(lastSynced));
 };
 
 const sync = {};
@@ -73,10 +75,11 @@ sync.syncIds = ({
     api.sendRequest(url, data, response => {
       if (response) {
         state.setLocalData({
-          ...latestHe ? {he: latestHe} : {},
-          ...latestPuid ? {puid: latestPuid} : {},
           connectId: response.connectId,
-          ttl: response.ttl,
+          he: latestHe,
+          puid: latestPuid,
+          lastUsed: state.getLocalData().lastUsed,
+          lastSynced: Date.now(),
         });
       }
     });

@@ -5,6 +5,7 @@ import sync from '../sync';
 import api from '../api';
 import sha256 from '../sha256';
 import {mockPrivacySignals} from './mockPrivacySignals';
+import state from "../state";
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 const MOCK_HASH_VALUE = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
@@ -33,7 +34,7 @@ describe('connectId', () => {
       const state = {
         he: 'abc',
         connectId: 'abc_connectId',
-        expires: 1596026151361,
+        lastSynced: 1596026151361,
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('connectIdOptOut', '1');
@@ -46,7 +47,7 @@ describe('connectId', () => {
       const state = {
         he: 'abc',
         connectId: 'abc_connectId',
-        expires: 1596026151361,
+        lastSynced: 1596026151361,
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('_pbjs_id_optout', '1');
@@ -59,7 +60,7 @@ describe('connectId', () => {
       const state = {
         he: 'abc',
         connectId: 'abc_connectId',
-        expires: 1596026151361,
+        lastSynced: 1596026151361,
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('_pubcid_optout', '1');
@@ -72,7 +73,7 @@ describe('connectId', () => {
       const state = {
         he: 'abc',
         connectId: 'abc_connectId',
-        expires: 1596026151361,
+        lastSynced: 1596026151361,
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
       window.localStorage.setItem('connectIdOptOut', '2');
@@ -107,7 +108,7 @@ describe('connectId', () => {
       const state = {
         he,
         connectId: 'abc_connectId',
-        expires: 1596026151361,
+        lastSynced: 1596026151361,
       };
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
 
@@ -123,6 +124,76 @@ describe('connectId', () => {
       mockPrivacySignals(false, '1---', false);
       connectId.getIds({pixelId: 12345, email: 'abc'}, response => {
         expect(response).toEqual({});
+        done();
+      });
+    });
+
+    it('should return empty object if no state is stored for provided email', done => {
+      mockPrivacySignals(false, '1---', false);
+      const he = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+      const state = {
+        he,
+        connectId: 'abc_connectId',
+        lastSynced: 1596026151361,
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+
+      connectId.getIds({pixelId: 12345, email: 'differentHashedEmail'}, response => {
+        expect(response).toEqual({});
+        done();
+      });
+    });
+
+    it('should return stored state for specified email', done => {
+      mockPrivacySignals(false, '1---', false);
+      const he = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+      const state = {
+        he,
+        connectId: 'abc_connectId',
+        lastSynced: 1596026151361,
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+
+      connectId.getIds({pixelId: 12345, email: he}, response => {
+        expect(response).toEqual({
+          connectId: 'abc_connectId',
+        });
+        done();
+      });
+    });
+
+    it('should return stored state for specified puid', done => {
+      mockPrivacySignals(false, '1---', false);
+      const puid = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+      const state = {
+        puid,
+        connectId: 'abc_connectId',
+        lastSynced: 1596026151361,
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+
+      connectId.getIds({pixelId: 12345, puid}, response => {
+        expect(response).toEqual({
+          connectId: 'abc_connectId',
+        });
+        done();
+      });
+    });
+
+    it('should return stored state if cached email exists but none passed in', done => {
+      mockPrivacySignals(false, '1---', false);
+      const he = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+      const state = {
+        he,
+        connectId: 'abc_connectId',
+        lastSynced: 1596026151361,
+      };
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(state));
+
+      connectId.getIds({pixelId: 12345}, response => {
+        expect(response).toEqual({
+          connectId: 'abc_connectId',
+        });
         done();
       });
     });
