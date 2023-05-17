@@ -43,7 +43,7 @@ const getConnectId = ({hashedEmail, hashedPuid} = {}) => {
   return {};
 };
 
-const setConnectId = (data = {}) => {
+const setLocalData = (data = {}) => {
   const expires = computeExpiration(data.ttl).getTime();
   const updatedData = {
     ...pick(getLocalData(), ['hashedEmail', 'hashedPuid']),
@@ -57,7 +57,7 @@ const setConnectId = (data = {}) => {
   }
 };
 
-const clear = () => {
+const clearLocalData = () => {
   try {
     localStorage.removeItem(LOCALSTORAGE_KEY);
   } catch (e) {
@@ -67,7 +67,7 @@ const clear = () => {
 
 export default {
   getLocalData,
+  setLocalData,
+  clearLocalData,
   getConnectId,
-  setConnectId,
-  clear,
 };

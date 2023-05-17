@@ -112,13 +112,13 @@ describe('sync', () => {
     // cache response
 
     it('should cache connectid for hashedEmail', () => {
-      spyOn(state, 'setConnectId');
+      spyOn(state, 'setLocalData');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
         callback({connectid: MOCK_CONNECTID, ttl: 24});
       });
 
       sync.syncIds({pixelId: 12345, hashedEmail: MOCK_HASH_EMAIL});
-      expect(state.setConnectId).toHaveBeenCalledWith(
+      expect(state.setLocalData).toHaveBeenCalledWith(
         {
           connectid: MOCK_CONNECTID,
           hashedEmail: MOCK_HASH_EMAIL,
@@ -128,13 +128,13 @@ describe('sync', () => {
     });
 
     it('should cache connectid for hashedPuid', () => {
-      spyOn(state, 'setConnectId');
+      spyOn(state, 'setLocalData');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
         callback({connectid: MOCK_CONNECTID, ttl: 24});
       });
 
       sync.syncIds({pixelId: 12345, hashedPuid: MOCK_HASH_PUID});
-      expect(state.setConnectId).toHaveBeenCalledWith(
+      expect(state.setLocalData).toHaveBeenCalledWith(
         {
           connectid: MOCK_CONNECTID,
           hashedPuid: MOCK_HASH_PUID,
@@ -144,13 +144,13 @@ describe('sync', () => {
     });
 
     it('should cache connectid for hashedEmail and hashedPuid', () => {
-      spyOn(state, 'setConnectId');
+      spyOn(state, 'setLocalData');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
         callback({connectid: MOCK_CONNECTID, ttl: 24});
       });
 
       sync.syncIds({pixelId: 12345, hashedEmail: MOCK_HASH_EMAIL, hashedPuid: MOCK_HASH_PUID});
-      expect(state.setConnectId).toHaveBeenCalledWith(
+      expect(state.setLocalData).toHaveBeenCalledWith(
         {
           connectid: MOCK_CONNECTID,
           hashedEmail: MOCK_HASH_EMAIL,
@@ -161,13 +161,13 @@ describe('sync', () => {
     });
 
     it('should update cache even when no connectid provided', () => {
-      spyOn(state, 'setConnectId');
+      spyOn(state, 'setLocalData');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
         callback({});
       });
 
       sync.syncIds({pixelId: 12345, hashedEmail: MOCK_HASH_EMAIL});
-      expect(state.setConnectId).toHaveBeenCalledWith(
+      expect(state.setLocalData).toHaveBeenCalledWith(
         {
           hashedEmail: MOCK_HASH_EMAIL,
           connectid: undefined,

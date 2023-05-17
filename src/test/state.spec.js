@@ -76,7 +76,7 @@ describe('state', () => {
     });
   });
 
-  describe('setConnectId', () => {
+  describe('setLocalData', () => {
     it('should store state for specified user', () => {
       const mockState = {
         connectid: 'def_connectid',
@@ -89,25 +89,25 @@ describe('state', () => {
         expires: Date.now() + 24 * 60 * 60 * 1000,
       };
 
-      state.setConnectId(mockState);
+      state.setLocalData(mockState);
       expect(localStorage.getItem(LOCALSTORAGE_KEY)).toEqual(JSON.stringify(expectedStoredValue));
     });
 
     it('should not throw an exception if invalid state is provided', () => {
       expect(() => {
-        state.setConnectId({hashedEmail: 'abc', connectid: null});
+        state.setLocalData({hashedEmail: 'abc', connectid: null});
       }).not.toThrow();
       expect(() => {
-        state.setConnectId({hashedEmail: 'abc', connectid: 123});
+        state.setLocalData({hashedEmail: 'abc', connectid: 123});
       }).not.toThrow();
       expect(() => {
-        state.setConnectId({hashedEmail: 'abc', connectid: true});
+        state.setLocalData({hashedEmail: 'abc', connectid: true});
       }).not.toThrow();
       expect(() => {
-        state.setConnectId({hashedEmail: 'abc', connectid: undefined});
+        state.setLocalData({hashedEmail: 'abc', connectid: undefined});
       }).not.toThrow();
       expect(() => {
-        state.setConnectId({});
+        state.setLocalData({});
       }).not.toThrow();
     });
   });

@@ -28,7 +28,7 @@ const isLocallyOptedOut = () => {
  */
 const getIds = ({pixelId, email, puid, yahoo1p}, callback) => {
   if (isLocallyOptedOut()) {
-    state.clear();
+    state.clearLocalData();
     callback({});
     return;
   }

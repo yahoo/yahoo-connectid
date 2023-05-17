@@ -73,7 +73,7 @@ sync.syncIds = ({
 
     api.sendRequest(url, data, response => {
       if (response) {
-        state.setConnectId({
+        state.setLocalData({
           ...latestHashedEmail ? {hashedEmail: latestHashedEmail} : {},
           ...latestHashedPuid ? {hashedPuid: latestHashedPuid} : {},
           connectid: response.connectid,
