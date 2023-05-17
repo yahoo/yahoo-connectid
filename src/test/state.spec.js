@@ -23,59 +23,6 @@ describe('state', () => {
     localStorage.clear();
   });
 
-  describe('getConnectId', () => {
-    it('should return empty object if no state is stored', () => {
-      expect(state.getConnectId(undefined)).toEqual({});
-    });
-
-    it('should return empty object if no state is stored for provided email', () => {
-      expect(state.getConnectId({he: MOCK_HASH_EMAIL})).toEqual({});
-    });
-
-    it('should return stored state for specified email', () => {
-      const mockState = {
-        he: MOCK_HASH_EMAIL,
-        connectId: MOCK_CONNECTID,
-      };
-
-      const expectedResult = {
-        connectId: MOCK_CONNECTID,
-      };
-
-      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId({he: MOCK_HASH_EMAIL})).toEqual(expectedResult);
-    });
-
-    it('should return stored state for specified puid', () => {
-      const mockState = {
-        puid: MOCK_HASH_PUID,
-        connectId: MOCK_CONNECTID,
-      };
-
-      const expectedResult = {
-        connectId: MOCK_CONNECTID,
-      };
-
-      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId({puid: MOCK_HASH_PUID})).toEqual(expectedResult);
-    });
-
-    it('should return stored state if cached email exists but none passed in', () => {
-      const mockState = {
-        he: MOCK_HASH_EMAIL,
-        puid: MOCK_HASH_PUID,
-        connectId: MOCK_CONNECTID,
-      };
-
-      const expectedResult = {
-        connectId: MOCK_CONNECTID,
-      };
-
-      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(mockState));
-      expect(state.getConnectId({puid: MOCK_HASH_PUID_ALT})).toEqual(expectedResult);
-    });
-  });
-
   describe('setLocalData', () => {
     it('should store state for specified user', () => {
       const mockState = {
@@ -86,11 +33,10 @@ describe('state', () => {
       const expectedStoredValue = {
         he: 'def',
         connectId: 'def_connectId',
-        expires: Date.now() + 24 * 60 * 60 * 1000,
       };
 
       state.setLocalData(mockState);
-      expect(localStorage.getItem(LOCALSTORAGE_KEY)).toEqual(JSON.stringify(expectedStoredValue));
+      expect(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY))).toEqual(expectedStoredValue);
     });
 
     it('should not throw an exception if invalid state is provided', () => {

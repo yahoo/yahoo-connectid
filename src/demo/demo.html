@@ -1,12 +1,12 @@
 <!-- Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. -->
 
 <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <title>Yahoo ConnectID JS Demo Page</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <style>
+<html lang="en" >
+<head >
+    <meta charset="utf-8" />
+    <title >Yahoo ConnectID JS Demo Page</title >
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style >
         html, body {
             overflow: hidden;
             height: 100%;
@@ -43,83 +43,93 @@
             display: inline-block;
         }
 
-    </style>
-</head>
-<body>
-<div id="root"></div>
-<h1>Yahoo ConnectID JS Module Demo</h1>
+        pre {
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
 
-<div class="content">
+    </style >
+</head >
+<body >
+<div id="root" ></div >
+<h1 >Yahoo ConnectID JS Module Demo</h1 >
 
-    <table>
-        <colgroup>
-            <col style="min-width: 350px">
-            <col style="width: 40%;">
-            <col style="width: 40%;">
-        </colgroup>
-        <thead>
-        <tr>
-            <th>Input</th>
-            <th>Output</th>
-            <th>Local Cache</th>
-        </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <div class="input">
-                        <span class="input-name">pixelId:</span>
-                        <input id="pixelId"/>
-                    </div>
-                    <div class="input">
-                        <span class="input-name">email:</span>
-                        <input id="email"/>
-                    </div>
-                    <div class="input">
-                        <span class="input-name">puid:</span>
-                        <input id="puid"/>
-                    </div>
+<div class="content" >
 
-                    <div class="input">
-                        <span class="input-name">Local Opt-out:</span>
-                        <select id="privacy_local">
-                            <option value="allowed">Allowed</option>
-                            <option value="not_allowed">Not Allowed</option>
-                            <option value="unavailable" selected>Unavailable</option>
-                        </select>
-                    </div>
+    <table >
+        <colgroup >
+            <col style="min-width: 350px" >
+            <col style="width: 40%;" >
+            <col style="width: 40%;" >
+        </colgroup >
+        <thead >
+        <tr >
+            <th >Input</th >
+            <th >Output</th >
+            <th >Local Cache</th >
+        </tr >
+        </thead >
+        <tbody >
+        <tr >
+            <td >
+                <div class="input" >
+                    <span class="input-name" >pixelId:</span >
+                    <input id="pixelId" />
+                </div >
+                <div class="input" >
+                    <span class="input-name" >email:</span >
+                    <input id="email" />
+                </div >
+                <div class="input" >
+                    <span class="input-name" >puid:</span >
+                    <input id="puid" />
+                </div >
 
-                    <div class="input">
-                        <span class="input-name">US Privacy:</span>
-                        <select id="privacy_usp">
-                            <option value="does_not_apply" selected>Does not apply</option>
-                            <option value="allowed">Allowed</option>
-                            <option value="not_allowed">Not Allowed</option>
-                            <option value="unavailable">Unavailable</option>
-                        </select>
-                    </div>
+                <div class="input" >
+                    <span class="input-name" >Local Opt-out:</span >
+                    <select id="privacy_local" >
+                        <option value="allowed" >Allowed</option >
+                        <option value="not_allowed" >Not Allowed</option >
+                        <option value="unavailable" selected >Unavailable</option >
+                    </select >
+                </div >
 
-                    <div class="input">
-                        <span class="input-name">GDPR Opt-out:</span>
-                        <select id="privacy_gdpr">
-                            <option value="does_not_apply" selected>Does not apply</option>
-                            <option value="allowed">Allowed</option>
-                            <option value="not_allowed">Not Allowed</option>
-                            <option value="unavailable">Unavailable</option>
-                        </select>
-                    </div>
+                <div class="input" >
+                    <span class="input-name" >US Privacy:</span >
+                    <select id="privacy_usp" >
+                        <option value="does_not_apply" selected >Does not apply</option >
+                        <option value="allowed" >Allowed</option >
+                        <option value="not_allowed" >Not Allowed</option >
+                        <option value="unavailable" >Unavailable</option >
+                    </select >
+                </div >
 
-                </td>
-                <td id="getIdsResponse"/>
-                <td id="localStorageData"/>
-            </tr>
-        </tbody>
-    </table>
-    <div>
-        <button id="execute">Execute</button>
-        <button id="reset">Reset</button>
-    </div>
-</div>
+                <div class="input" >
+                    <span class="input-name" >GDPR Opt-out:</span >
+                    <select id="privacy_gdpr" >
+                        <option value="does_not_apply" selected >Does not apply</option >
+                        <option value="allowed" >Allowed</option >
+                        <option value="not_allowed" >Not Allowed</option >
+                        <option value="unavailable" >Unavailable</option >
+                    </select >
+                </div >
 
-</body>
-</html>
+            </td >
+            <td id="getIdsResponse" >
+                <pre />
+            </td>
+            <td id="localStorageData" >
+                <pre />
+            </td >
+        </tr >
+        </tbody >
+    </table >
+    <div >
+        <button id="execute" >Execute</button >
+        <button id="reset" >Reset</button >
+    </div >
+</div >
+
+</body >
+</html >

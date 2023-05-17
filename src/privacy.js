@@ -34,6 +34,18 @@ const getPrivacyData = callback => {
   });
 };
 
+const isLocallyOptedOut = () => {
+  try {
+    const localOptOut = window.localStorage.getItem('connectIdOptOut');
+    const prebidOptOut1 = window.localStorage.getItem('_pbjs_id_optout');
+    const prebidOptOut2 = window.localStorage.getItem('_pubcid_optout');
+    return localOptOut === '1' || prebidOptOut1 || prebidOptOut2;
+  } catch (e) {
+    return false;
+  }
+};
+
 export default {
   getPrivacyData,
+  isLocallyOptedOut,
 };

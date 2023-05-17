@@ -3,17 +3,7 @@
 import sha256 from './sha256';
 import state from './state';
 import sync from './sync';
-
-const isLocallyOptedOut = () => {
-  try {
-    const localOptOut = window.localStorage.getItem('connectIdOptOut');
-    const prebidOptOut1 = window.localStorage.getItem('_pbjs_id_optout');
-    const prebidOptOut2 = window.localStorage.getItem('_pubcid_optout');
-    return localOptOut === '1' || prebidOptOut1 || prebidOptOut2;
-  } catch (e) {
-    return false;
-  }
-};
+import privacy from './privacy';
 
 /**
  * Provides locally stored IDs mapped to the provided email.  Currently, only the ConnectID is supported, however
@@ -27,7 +17,7 @@ const isLocallyOptedOut = () => {
  * @param {Function} callback - (required)
  */
 const getIds = ({pixelId, email, puid, yahoo1p}, callback) => {
-  if (isLocallyOptedOut()) {
+  if (privacy.isLocallyOptedOut()) {
     state.clearLocalData();
     callback({});
     return;
@@ -36,7 +26,18 @@ const getIds = ({pixelId, email, puid, yahoo1p}, callback) => {
   sha256.getHashedIdentifier(email, hashedEmail => {
     sha256.getHashedIdentifier(puid, hashedPuid => {
       sync.syncIds({pixelId, he: hashedEmail, puid: hashedPuid, yahoo1p});
-      callback(state.getConnectId({he: hashedEmail, puid: hashedPuid}));
+      const localData = state.getLocalData();
+      if (
+        (!hashedEmail && !hashedPuid)
+        || (!hashedEmail && !!localData.he) || (hashedEmail && hashedEmail === localData.he)
+        || (!hashedPuid && !!localData.puid) || (hashedPuid && hashedPuid === localData.puid)
+      ) {
+        // if no ids provided or any id matches, return connectId
+        callback({connectId: localData.connectId});
+      } else {
+        callback({});
+      }
+      state.setLocalData({...state.getLocalData(), lastUsed: Date.now()});
     });
   });
 };
