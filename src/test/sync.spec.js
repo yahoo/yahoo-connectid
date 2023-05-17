@@ -4,13 +4,13 @@ import sinon from 'sinon';
 import api from '../api';
 import sync from '../sync';
 import state from '../state';
-import connectid from '../connectid';
+import connectId from '../connectid';
 import {MOCK_GDPR_TCSTRING, mockPrivacySignals} from './mockPrivacySignals';
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 const MOCK_HASH_EMAIL = '7d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c91';
 const MOCK_HASH_PUID = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
-const MOCK_CONNECTID = 'mock-connectid';
+const MOCK_CONNECTID = 'mock-connectId';
 
 describe('sync', () => {
   const now = new Date();
@@ -31,7 +31,7 @@ describe('sync', () => {
 
     it('should call api', () => {
       spyOn(api, 'sendRequest');
-      sync.syncIds({pixelId: 12345, hashedEmail: MOCK_HASH_EMAIL});
+      sync.syncIds({pixelId: 12345, he: MOCK_HASH_EMAIL});
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
         he: MOCK_HASH_EMAIL,
         v: 1,
@@ -41,7 +41,7 @@ describe('sync', () => {
 
     it('should not call api if no identifiers available', done => {
       spyOn(api, 'sendRequest');
-      connectid.getIds({
+      connectId.getIds({
         pixelId: 12345,
         yahoo1p: true,
       }, () => {
@@ -52,8 +52,8 @@ describe('sync', () => {
 
     it('should not call api if no pixel id provided', done => {
       spyOn(api, 'sendRequest');
-      connectid.getIds({
-        hashedEmail: MOCK_HASH_EMAIL,
+      connectId.getIds({
+        he: MOCK_HASH_EMAIL,
         yahoo1p: true,
       }, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
@@ -63,13 +63,13 @@ describe('sync', () => {
 
     it('should not call api if local data is available and not stale', done => {
       localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify({
-        hashedEmail: MOCK_HASH_EMAIL,
-        connectid: 'abc_connectid',
+        he: MOCK_HASH_EMAIL,
+        connectId: 'abc_connectId',
         expires: Date.now() + 1000,
       }));
 
       spyOn(api, 'sendRequest');
-      connectid.getIds({pixelId: 123, email: MOCK_HASH_EMAIL}, () => {
+      connectId.getIds({pixelId: 123, email: MOCK_HASH_EMAIL}, () => {
         expect(api.sendRequest).not.toHaveBeenCalled();
         done();
       });
@@ -79,8 +79,8 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       sync.syncIds({
         pixelId: 12345,
-        hashedEmail: MOCK_HASH_EMAIL,
-        hashedPuid: MOCK_HASH_PUID,
+        he: MOCK_HASH_EMAIL,
+        puid: MOCK_HASH_PUID,
         yahoo1p: true,
       });
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
@@ -97,7 +97,7 @@ describe('sync', () => {
       spyOn(api, 'sendRequest');
       sync.syncIds({
         pixelId: 12345,
-        hashedEmail: MOCK_HASH_EMAIL,
+        he: MOCK_HASH_EMAIL,
       });
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
         he: MOCK_HASH_EMAIL,
@@ -111,66 +111,66 @@ describe('sync', () => {
 
     // cache response
 
-    it('should cache connectid for hashedEmail', () => {
-      spyOn(state, 'setConnectId');
+    it('should cache connectId for he', () => {
+      spyOn(state, 'setLocalData');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
-        callback({connectid: MOCK_CONNECTID, ttl: 24});
+        callback({connectId: MOCK_CONNECTID, ttl: 24});
       });
 
-      sync.syncIds({pixelId: 12345, hashedEmail: MOCK_HASH_EMAIL});
-      expect(state.setConnectId).toHaveBeenCalledWith(
+      sync.syncIds({pixelId: 12345, he: MOCK_HASH_EMAIL});
+      expect(state.setLocalData).toHaveBeenCalledWith(
         {
-          connectid: MOCK_CONNECTID,
-          hashedEmail: MOCK_HASH_EMAIL,
+          connectId: MOCK_CONNECTID,
+          he: MOCK_HASH_EMAIL,
           ttl: 24,
         },
       );
     });
 
-    it('should cache connectid for hashedPuid', () => {
-      spyOn(state, 'setConnectId');
+    it('should cache connectId for puid', () => {
+      spyOn(state, 'setLocalData');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
-        callback({connectid: MOCK_CONNECTID, ttl: 24});
+        callback({connectId: MOCK_CONNECTID, ttl: 24});
       });
 
-      sync.syncIds({pixelId: 12345, hashedPuid: MOCK_HASH_PUID});
-      expect(state.setConnectId).toHaveBeenCalledWith(
+      sync.syncIds({pixelId: 12345, puid: MOCK_HASH_PUID});
+      expect(state.setLocalData).toHaveBeenCalledWith(
         {
-          connectid: MOCK_CONNECTID,
-          hashedPuid: MOCK_HASH_PUID,
+          connectId: MOCK_CONNECTID,
+          puid: MOCK_HASH_PUID,
           ttl: 24,
         },
       );
     });
 
-    it('should cache connectid for hashedEmail and hashedPuid', () => {
-      spyOn(state, 'setConnectId');
+    it('should cache connectId for he and puid', () => {
+      spyOn(state, 'setLocalData');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
-        callback({connectid: MOCK_CONNECTID, ttl: 24});
+        callback({connectId: MOCK_CONNECTID, ttl: 24});
       });
 
-      sync.syncIds({pixelId: 12345, hashedEmail: MOCK_HASH_EMAIL, hashedPuid: MOCK_HASH_PUID});
-      expect(state.setConnectId).toHaveBeenCalledWith(
+      sync.syncIds({pixelId: 12345, he: MOCK_HASH_EMAIL, puid: MOCK_HASH_PUID});
+      expect(state.setLocalData).toHaveBeenCalledWith(
         {
-          connectid: MOCK_CONNECTID,
-          hashedEmail: MOCK_HASH_EMAIL,
-          hashedPuid: MOCK_HASH_PUID,
+          connectId: MOCK_CONNECTID,
+          he: MOCK_HASH_EMAIL,
+          puid: MOCK_HASH_PUID,
           ttl: 24,
         },
       );
     });
 
-    it('should update cache even when no connectid provided', () => {
-      spyOn(state, 'setConnectId');
+    it('should update cache even when no connectId provided', () => {
+      spyOn(state, 'setLocalData');
       spyOn(api, 'sendRequest').and.callFake((apiUrl, data, callback) => {
         callback({});
       });
 
-      sync.syncIds({pixelId: 12345, hashedEmail: MOCK_HASH_EMAIL});
-      expect(state.setConnectId).toHaveBeenCalledWith(
+      sync.syncIds({pixelId: 12345, he: MOCK_HASH_EMAIL});
+      expect(state.setLocalData).toHaveBeenCalledWith(
         {
-          hashedEmail: MOCK_HASH_EMAIL,
-          connectid: undefined,
+          he: MOCK_HASH_EMAIL,
+          connectId: undefined,
           ttl: undefined,
         },
       );

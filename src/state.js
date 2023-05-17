@@ -28,26 +28,26 @@ const getLocalData = () => {
   }
 };
 
-const getConnectId = ({hashedEmail, hashedPuid} = {}) => {
+const getConnectId = ({he, puid} = {}) => {
   const localData = getLocalData();
-  // if no ids provided or any id matches, return connectid
+  // if no ids provided or any id matches, return connectId
   if (
-    (!hashedEmail && !hashedPuid)
-    || (!hashedEmail && !!localData.hashedEmail)
-    || (hashedEmail && hashedEmail === localData.hashedEmail)
-    || (!hashedPuid && !!localData.hashedPuid)
-    || (hashedPuid && hashedPuid === localData.hashedPuid)
+    (!he && !puid)
+    || (!he && !!localData.he)
+    || (he && he === localData.he)
+    || (!puid && !!localData.puid)
+    || (puid && puid === localData.puid)
   ) {
-    return pick(localData, ['connectid']);
+    return pick(localData, ['connectId']);
   }
   return {};
 };
 
-const setConnectId = (data = {}) => {
+const setLocalData = (data = {}) => {
   const expires = computeExpiration(data.ttl).getTime();
   const updatedData = {
-    ...pick(getLocalData(), ['hashedEmail', 'hashedPuid']),
-    ...pick(data, ['hashedEmail', 'hashedPuid', 'connectid']),
+    ...pick(getLocalData(), ['he', 'puid']),
+    ...pick(data, ['he', 'puid', 'connectId']),
     expires,
   };
   try {
@@ -57,7 +57,7 @@ const setConnectId = (data = {}) => {
   }
 };
 
-const clear = () => {
+const clearLocalData = () => {
   try {
     localStorage.removeItem(LOCALSTORAGE_KEY);
   } catch (e) {
@@ -67,7 +67,7 @@ const clear = () => {
 
 export default {
   getLocalData,
+  setLocalData,
+  clearLocalData,
   getConnectId,
-  setConnectId,
-  clear,
 };
