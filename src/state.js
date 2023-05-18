@@ -3,11 +3,12 @@
 const STORAGE_KEY = 'connectId';
 
 const getCookie = () => {
+  const name = `${STORAGE_KEY}=`;
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     const c = (ca[i] || '').trim();
-    if (c.indexOf(STORAGE_KEY) === 0) {
-      return c.substring(STORAGE_KEY.length, c.length);
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
     }
   }
   return '';
