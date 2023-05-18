@@ -6,13 +6,11 @@ import sync from './sync';
 import privacy from './privacy';
 
 /**
- * Provides locally stored IDs mapped to the provided email.  Currently, only the ConnectID is supported, however
- * additional IDs (e.g. LiveRamp, LiveIntent, Merkle) may be supported in the future.
- *
+ * Provides locally stored IDs mapped to the provided email.  Currently, only the ConnectID is supported.*
  * @param {number} pixelId - (required) publisher specific pixel id
  * @param {string?} email - (optional) A raw or hashed email.  An email is determined to be raw if it contains
+ *    an "@" character.  If no email is provided, the most recently provided email will be used.
  * @param {string?} puid - (optional) Publisher's user identifier
- * an "@" character.  If no email is provided, the most recently provided email will be used.
  * @param {boolean?} yahoo1p - true if used in a Yahoo O&O page, otherwise false
  * @param {Function} callback - (required)
  */
@@ -37,7 +35,9 @@ const getIds = ({pixelId, email, puid, yahoo1p}, callback) => {
       } else {
         callback({});
       }
-      state.setLocalData({...state.getLocalData(), lastUsed: Date.now()});
+      if (localData.connectId) {
+        state.setLocalData({...localData, lastUsed: Date.now()});
+      }
     });
   });
 };

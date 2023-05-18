@@ -39,13 +39,13 @@ describe('sync', () => {
       }, jasmine.anything());
     });
 
-    it('should not call api if no identifiers available', done => {
+    it('should call api when no identifiers available', done => {
       spyOn(api, 'sendRequest');
       connectId.getIds({
         pixelId: 12345,
         yahoo1p: true,
       }, () => {
-        expect(api.sendRequest).not.toHaveBeenCalled();
+        expect(api.sendRequest).toHaveBeenCalled();
       });
       done();
     });

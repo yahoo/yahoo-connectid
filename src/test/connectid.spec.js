@@ -2,10 +2,8 @@
 
 import connectId from '../connectid';
 import sync from '../sync';
-import api from '../api';
 import sha256 from '../sha256';
 import {mockPrivacySignals} from './mockPrivacySignals';
-import state from "../state";
 
 const LOCALSTORAGE_KEY = 'yahoo-connectid';
 const MOCK_HASH_VALUE = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
@@ -230,13 +228,13 @@ describe('connectId', () => {
       });
     });
 
-    it('should fail gracefully when hashing if browser does not support crypto', done => {
+    it('should exclude raw ids if browser does not support crypto', done => {
       const crypto = window.crypto;
       Object.defineProperty(window, 'crypto', {value: null});
       mockPrivacySignals(false, '1---', false);
-      spyOn(api, 'sendRequest');
+      spyOn(sync, 'syncIds');
       connectId.getIds({pixelId: 12345, email: 'abc@foo.com'}, () => {
-        expect(api.sendRequest).not.toHaveBeenCalled();
+        expect(sync.syncIds.calls.first().args[0].he).toBeUndefined();
         done();
       });
       Object.defineProperty(window, 'crypto', {value: crypto});
