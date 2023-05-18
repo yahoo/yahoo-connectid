@@ -4,15 +4,16 @@ import state from './state';
 import api from './api';
 import privacy from './privacy';
 
-const TTL = 24 * 60 * 60 * 1000;
+const CONNECTID_TTL = 24 * 60 * 60 * 1000;
+const PUID_TTL = 30 * 24 * 60 * 60 * 1000;
 
 /**
- * Determines if a specified timestamp is stale (older than TTL)
+ * Determines if a specified timestamp is stale (older than CONNECTID_TTL)
  *
  * @param {string} ts timestamp
  * @returns {boolean} true if stale, otherwise false
  */
-const isStale = ts => (!ts || (new Date(ts).getTime() + TTL) < Date.now());
+const isStale = (ts, ttl) => (!ts || (new Date(ts).getTime() + ttl) < Date.now());
 
 const shouldSync = ({pixelId, he, puid}) => {
   // pixelId is required
@@ -26,11 +27,9 @@ const shouldSync = ({pixelId, he, puid}) => {
     lastSynced,
   } = state.getLocalData();
 
-  const heExists = he || cachedHe;
-  const puidExists = puid || cachedPuid;
   const heChanged = he && he !== cachedHe;
   const puidChanged = puid && puid !== cachedPuid;
-  return (heExists || puidExists) && (heChanged || puidChanged || isStale(lastSynced));
+  return heChanged || puidChanged || isStale(lastSynced, CONNECTID_TTL);
 };
 
 const sync = {};
@@ -56,7 +55,11 @@ sync.syncIds = ({
   privacy.getPrivacyData((privacyData) => {
     const localData = state.getLocalData();
     const latestHe = he || localData.he;
-    const latestPuid = puid || localData.puid;
+    let latestPuid = puid;
+    if (!puid && localData.puid && !isStale(localData.lastUsed, PUID_TTL)) {
+      // use cached puid if no puid passed in and connectId used recently
+      latestPuid = localData.puid;
+    }
 
     // call UPS to get connectId
     const url = `https://ups.analytics.yahoo.com/ups/${pixelId}/fed`;
@@ -72,16 +75,14 @@ sync.syncIds = ({
       url: `${protocol}//${host}${pathname}`,
     };
 
-    api.sendRequest(url, data, response => {
-      if (response) {
-        state.setLocalData({
-          connectId: response.connectId,
-          he: latestHe,
-          puid: latestPuid,
-          lastUsed: state.getLocalData().lastUsed,
-          lastSynced: Date.now(),
-        });
-      }
+    api.sendRequest(url, data, (response = {}) => {
+      state.setLocalData({
+        connectId: response.connectId,
+        he: latestHe,
+        puid: latestPuid || response.puid,
+        lastUsed: Date.now(),
+        lastSynced: Date.now(),
+      });
     });
   });
 };

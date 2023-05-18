@@ -3,11 +3,7 @@
 import sinon from 'sinon';
 import state from '../state';
 
-const LOCALSTORAGE_KEY = 'yahoo-connectid';
-const MOCK_HASH_EMAIL = '7d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c91';
-const MOCK_HASH_PUID = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
-const MOCK_HASH_PUID_ALT = '9d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c93';
-const MOCK_CONNECTID = 'mock-connectId';
+const LOCALSTORAGE_KEY = 'connectId';
 
 describe('state', () => {
   const now = new Date();

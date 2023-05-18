@@ -8,10 +8,10 @@
  */
 const computeHash = (str, callback) => {
   if (typeof str !== 'string' || !str) {
-    callback('');
+    callback();
   } else if (!window.crypto || !crypto.subtle || !crypto.subtle.digest) {
     // browser does not support crypto API, fail gracefully.  IE11 does not support this API
-    callback('');
+    callback();
   } else {
     const msgBuffer = new TextEncoder('utf-8').encode(str.trim().toLowerCase());
     crypto.subtle.digest('SHA-256', msgBuffer).then(hashBuffer => {

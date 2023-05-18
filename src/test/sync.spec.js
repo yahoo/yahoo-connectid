@@ -7,7 +7,7 @@ import state from '../state';
 import connectId from '../connectid';
 import {MOCK_GDPR_TCSTRING, mockPrivacySignals} from './mockPrivacySignals';
 
-const LOCALSTORAGE_KEY = 'yahoo-connectid';
+const LOCALSTORAGE_KEY = 'connectId';
 const MOCK_HASH_EMAIL = '7d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c91';
 const MOCK_HASH_PUID = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
 const MOCK_CONNECTID = 'mock-connectId';
@@ -39,13 +39,13 @@ describe('sync', () => {
       }, jasmine.anything());
     });
 
-    it('should not call api if no identifiers available', done => {
+    it('should call api when no identifiers available', done => {
       spyOn(api, 'sendRequest');
       connectId.getIds({
         pixelId: 12345,
         yahoo1p: true,
       }, () => {
-        expect(api.sendRequest).not.toHaveBeenCalled();
+        expect(api.sendRequest).toHaveBeenCalled();
       });
       done();
     });
