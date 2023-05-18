@@ -3,7 +3,7 @@
 import sinon from 'sinon';
 import state from '../state';
 
-const LOCALSTORAGE_KEY = 'yahoo-connectid';
+const LOCALSTORAGE_KEY = 'connectId';
 
 describe('state', () => {
   const now = new Date();

@@ -5,7 +5,7 @@ import sync from '../sync';
 import sha256 from '../sha256';
 import {mockPrivacySignals} from './mockPrivacySignals';
 
-const LOCALSTORAGE_KEY = 'yahoo-connectid';
+const LOCALSTORAGE_KEY = 'connectId';
 const MOCK_HASH_VALUE = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
 
 const mockGetHashedIdentifier = (id, callback) => {
