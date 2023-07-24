@@ -2,8 +2,8 @@
 
 const STORAGE_KEY = 'connectId';
 
-const getCookie = () => {
-  const name = `${STORAGE_KEY}=`;
+const getCookie = (storageKey = STORAGE_KEY) => {
+  const name = `${storageKey}=`;
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     const c = (ca[i] || '').trim();
@@ -85,6 +85,7 @@ const clearLocalData = () => {
 };
 
 export default {
+  getCookie,
   getLocalData,
   setLocalData,
   clearLocalData,
