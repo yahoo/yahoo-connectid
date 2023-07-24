@@ -21,7 +21,10 @@ const getIds = ({pixelId, email, puid, yahoo1p}, callback) => {
     return;
   }
 
-  sha256.getHashedIdentifier(email, hashedEmail => {
+  // look for email stored by publisher in "yahooId" cookie
+  const yahooId = state.getCookie('yahooId');
+
+  sha256.getHashedIdentifier(email || yahooId, hashedEmail => {
     sha256.getHashedIdentifier(puid, hashedPuid => {
       sync.syncIds({pixelId, he: hashedEmail, puid: hashedPuid, yahoo1p});
       const localData = state.getLocalData();

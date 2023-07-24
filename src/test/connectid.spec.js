@@ -220,7 +220,7 @@ describe('connectId', () => {
       connectId.getIds({pixelId: 12345, puid: 'abc'}, () => {
         expect(sync.syncIds).toHaveBeenCalledWith({
           pixelId: 12345,
-          he: undefined,
+          he: '',
           puid: MOCK_HASH_VALUE,
           yahoo1p: undefined,
         });

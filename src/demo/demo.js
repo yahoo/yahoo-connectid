@@ -69,9 +69,9 @@ const callGetIds = () => {
   document.getElementById('pixelId').value = demoState.pixelId || '';
   document.getElementById('email').value = demoState.email || '';
   document.getElementById('puid').value = demoState.puid || '';
-  document.getElementById('privacy_local').value = demoState.privacyLocal;
-  document.getElementById('privacy_usp').value = demoState.privacyUsp;
-  document.getElementById('privacy_gdpr').value = demoState.privacyGdpr;
+  document.getElementById('privacy_local').value = demoState.privacyLocal || 'unavailable';
+  document.getElementById('privacy_usp').value = demoState.privacyUsp || 'does_not_apply';
+  document.getElementById('privacy_gdpr').value = demoState.privacyGdpr || 'does_not_apply';
 
   setPrivacyPreferences(demoState.privacyLocal, demoState.privacyUsp, demoState.privacyGdpr);
 
@@ -89,7 +89,7 @@ const callGetIds = () => {
     const pixelId = document.getElementById('pixelId').value;
     const email = document.getElementById('email').value;
     const puid = document.getElementById('puid').value;
-    const privacyLocal = document.getElementById('privacy_local').value || 'does_not_apply';
+    const privacyLocal = document.getElementById('privacy_local').value || 'unavailable';
     const privacyUsp = document.getElementById('privacy_usp').value || 'does_not_apply';
     const privacyGdpr = document.getElementById('privacy_gdpr').value || 'does_not_apply';
     window.localStorage.setItem(LOCALSTORAGE_KEY_DEMO, JSON.stringify({
@@ -106,13 +106,19 @@ const callGetIds = () => {
 
   document.getElementById('reset').onclick = () => {
     window.localStorage.removeItem(LOCALSTORAGE_KEY);
+    document.cookie = `${LOCALSTORAGE_KEY}=;Max-Age=0;Domain=.test.com;path=/;Secure;SameSite=None`;
+
     const pixelId = document.getElementById('pixelId').value;
+    const privacyLocal = document.getElementById('privacy_local').value || 'unavailable';
+    const privacyUsp = document.getElementById('privacy_usp').value || 'does_not_apply';
+    const privacyGdpr = document.getElementById('privacy_gdpr').value || 'does_not_apply';
     window.localStorage.setItem(LOCALSTORAGE_KEY_DEMO, JSON.stringify({
       pixelId,
-      privacyLocal: 'unavailable',
-      privacyUsp: 'does_not_apply',
-      privacyGdpr: 'does_not_apply',
+      privacyLocal,
+      privacyUsp,
+      privacyGdpr,
     }));
+
     callGetIds();
   };
 

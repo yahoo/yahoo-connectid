@@ -12,11 +12,31 @@ describe('state', () => {
   beforeEach(() => {
     clock = sinon.useFakeTimers(now.getTime());
     localStorage.clear();
+    document.cookie = 'abc=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'connectId=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
   });
 
   afterEach(() => {
     clock.restore();
     localStorage.clear();
+  });
+
+  describe('getCookie', () => {
+    it('should return value of specified cookie', () => {
+      document.cookie = 'abc=123';
+      expect(state.getCookie('abc')).toBe('123');
+    });
+
+    it('should return empty string if specified cookie does not exist', () => {
+      expect(state.getCookie('def')).toBe('');
+    });
+  });
+
+  describe('getLocalData', () => {
+    it('should return local data', () => {
+      document.cookie = `connectId=${JSON.stringify({abc: 234})}`;
+      expect(state.getLocalData()).toEqual({abc: 234});
+    });
   });
 
   describe('setLocalData', () => {
