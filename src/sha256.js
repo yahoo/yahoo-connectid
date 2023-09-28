@@ -11,7 +11,7 @@ const computeHash = (str, callback) => {
     callback();
   } else if (!window.crypto || !crypto.subtle || !crypto.subtle.digest) {
     // browser does not support crypto API, fail gracefully.  IE11 does not support this API
-    callback();
+    callback(str.indexOf('@') > -1 ? undefined : str);
   } else {
     const msgBuffer = new TextEncoder('utf-8').encode(str.trim().toLowerCase());
     crypto.subtle.digest('SHA-256', msgBuffer).then(hashBuffer => {

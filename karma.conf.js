@@ -37,7 +37,7 @@ module.exports = function (config) {
     //address that the server will listen on, '0.0.0.0' is default
     listenAddress: '0.0.0.0',
     //hostname to be used when capturing browsers, 'localhost' is default
-    hostname: 'localhost',
+    hostname: 'mydev.aol.com',
     //the port where the web server will be listening, 9876 is default
     port: 9876,
     //when a browser crashes, karma will try to relaunch, 2 is default
