@@ -24,12 +24,13 @@ const shouldSync = ({pixelId, he, puid}) => {
   const {
     he: cachedHe,
     puid: cachedPuid,
+    ttl,
     lastSynced,
   } = state.getLocalData();
 
   const heChanged = he && he !== cachedHe;
   const puidChanged = puid && puid !== cachedPuid;
-  return heChanged || puidChanged || isStale(lastSynced, CONNECTID_TTL);
+  return heChanged || puidChanged || isStale(lastSynced, ttl || CONNECTID_TTL);
 };
 
 const sync = {};
@@ -82,6 +83,7 @@ sync.syncIds = ({
         connectId: response.connectId,
         he: latestHe,
         puid: latestPuid || response.puid,
+        ttl: Math.min(response.ttl || 24, 24) * 60 * 60 * 1000,
         lastUsed: Date.now(),
         lastSynced: Date.now(),
       });
