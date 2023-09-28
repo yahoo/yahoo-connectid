@@ -1,35 +1,59 @@
 /* Copyright Yahoo, Licensed under the terms of the Apache 2.0 license. See LICENSE file in project root for terms. */
 
-const getTCFData = callback => {
-  if (!window.__tcfapi) {
-    callback(false);
-    return;
+const getGPPData = callback => {
+  if (typeof window.__gpp !== 'function') {
+    callback({msg: 'API not found'}, false);
+  } else {
+    window.__gpp('addEventListener', (response, success) => {
+      if (!success || response?.pingData?.cmpStatus === 'error') {
+        callback({}, false);
+      } else if (response?.pingData?.signalStatus === 'ready') {
+        callback(response, true);
+      }
+    });
   }
+};
 
-  window.__tcfapi('addEventListener', 2, (response, success) => {
-    if (!success || response.cmpStatus === 'error') {
-      callback(false);
-    } else if (response.eventStatus === 'tcloaded' || response.eventStatus === 'useractioncomplete') {
-      callback(true, response.gdprApplies, response.tcString);
-    }
-  });
+const getTCFData = callback => {
+  if (typeof window.__tcfapi !== 'function') {
+    callback({msg: 'API not found'}, false);
+  } else {
+    window.__tcfapi('addEventListener', 2, (response, success) => {
+      if (!success || response?.cmpStatus === 'error') {
+        callback({}, false);
+      } else if (response?.eventStatus === 'tcloaded' || response?.eventStatus === 'useractioncomplete') {
+        callback(response, true);
+      }
+    });
+  }
 };
 
 const getUSPData = callback => {
-  if (!window.__uspapi) {
-    callback(false);
-    return;
+  if (typeof window.__uspapi !== 'function') {
+    callback({msg: 'API not found'}, false);
+  } else {
+    window.__uspapi('getUSPData', null, (response, success) => {
+      if (!success) {
+        callback({}, false);
+      } else {
+        callback(response, true);
+      }
+    });
   }
-
-  window.__uspapi('getUSPData', null, (response) => {
-    callback(true, response.uspString);
-  });
 };
 
 const getPrivacyData = callback => {
-  getUSPData((uspDataSuccess, uspString) => {
-    getTCFData((tcfDataSuccess, gdprApplies, tcString) => {
-      callback({uspString, gdprApplies, tcString});
+  getGPPData((gppResponse, gppSuccess) => {
+    getTCFData((tcfResponse, tcfSuccess) => {
+      getUSPData((uspResponse, uspSuccess) => {
+        callback({
+          gpp: gppResponse?.pingData?.gppString,
+          gppSid: gppResponse?.pingData?.applicableSections?.join(',') || '-1',
+          uspString: uspResponse?.uspString,
+          gdprApplies: tcfResponse?.gdprApplies,
+          tcString: tcfResponse?.tcString,
+        });
+      });
     });
   });
 };

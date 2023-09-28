@@ -67,6 +67,8 @@ sync.syncIds = ({
     const data = {
       ...latestHe ? {he: latestHe} : {},
       ...latestPuid ? {puid: latestPuid} : {},
+      ...privacyData.gpp !== undefined ? {gpp: privacyData.gpp} : {},
+      ...privacyData.gppSid !== undefined ? {gpp_sid: privacyData.gppSid} : {},
       ...privacyData.gdprApplies !== undefined ? {gdpr: privacyData.gdprApplies} : {},
       ...privacyData.tcString !== undefined ? {gdpr_consent: privacyData.tcString} : {},
       ...privacyData.uspString !== undefined ? {us_privacy: privacyData.uspString} : {},

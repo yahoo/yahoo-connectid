@@ -67,7 +67,7 @@ describe('connectId', () => {
     });
 
     it('should not clear local cache if connectIdOptOut is not 1', () => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       const state = {
         he: 'abc',
         connectId: 'abc_connectId',
@@ -90,7 +90,7 @@ describe('connectId', () => {
     });
 
     it('should sync if connectIdOptOut is not 1', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       spyOn(sync, 'syncIds');
       connectId.getIds({pixelId: 123, email: 'abc'}, () => {
         expect(sync.syncIds).toHaveBeenCalled();
@@ -101,7 +101,7 @@ describe('connectId', () => {
     // callback
 
     it('should return stored user state', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       const he = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
       const state = {
         he,
@@ -119,7 +119,7 @@ describe('connectId', () => {
     });
 
     it('should return empty object if no state is available', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       connectId.getIds({pixelId: 12345, email: 'abc'}, response => {
         expect(response).toEqual({});
         done();
@@ -127,7 +127,7 @@ describe('connectId', () => {
     });
 
     it('should return empty object if no state is stored for provided email', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       const he = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
       const state = {
         he,
@@ -143,7 +143,7 @@ describe('connectId', () => {
     });
 
     it('should return stored state for specified email', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       const he = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
       const state = {
         he,
@@ -161,7 +161,7 @@ describe('connectId', () => {
     });
 
     it('should return stored state for specified puid', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       const puid = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
       const state = {
         puid,
@@ -179,7 +179,7 @@ describe('connectId', () => {
     });
 
     it('should return stored state if cached email exists but none passed in', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       const he = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
       const state = {
         he,
@@ -199,7 +199,7 @@ describe('connectId', () => {
     // hashing
 
     it('should hash email if raw email is passed in', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       spyOn(sync, 'syncIds');
       spyOn(sha256, 'getHashedIdentifier').and.callFake(mockGetHashedIdentifier);
       connectId.getIds({pixelId: 12345, email: 'abc@foo.com'}, () => {
@@ -214,7 +214,7 @@ describe('connectId', () => {
     });
 
     it('should hash puid if raw puid is passed in', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       spyOn(sync, 'syncIds');
       spyOn(sha256, 'getHashedIdentifier').and.callFake(mockGetHashedIdentifier);
       connectId.getIds({pixelId: 12345, puid: 'abc'}, () => {
@@ -231,7 +231,7 @@ describe('connectId', () => {
     it('should exclude raw ids if browser does not support crypto', done => {
       const crypto = window.crypto;
       Object.defineProperty(window, 'crypto', {value: null});
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       spyOn(sync, 'syncIds');
       connectId.getIds({pixelId: 12345, email: 'abc@foo.com'}, () => {
         expect(sync.syncIds.calls.first().args[0].he).toBeUndefined();
@@ -243,7 +243,7 @@ describe('connectId', () => {
     // syncing
 
     it('should sync', done => {
-      mockPrivacySignals(false, '1---', false);
+      mockPrivacySignals(false, 'gpp-string', ['6'], false);
       spyOn(sha256, 'getHashedIdentifier').and.callFake(mockGetHashedIdentifier);
       spyOn(sync, 'syncIds');
       connectId.getIds({pixelId: 12345, email: 'abc'}, () => {
