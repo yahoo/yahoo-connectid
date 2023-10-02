@@ -6,12 +6,14 @@ import {MOCK_GDPR_TCSTRING, mockPrivacySignals} from './mockPrivacySignals';
 describe('privacy', () => {
   describe('getPrivacyData', () => {
     it('should return values from CMP', done => {
-      mockPrivacySignals(false, '1---', true, true);
+      mockPrivacySignals(false, 'gpp-string', [6], true, '1---', true);
 
       privacy.getPrivacyData((privacyData) => {
         expect(privacyData.uspString).toBe('1---');
         expect(privacyData.tcString).toBe(MOCK_GDPR_TCSTRING);
         expect(privacyData.gdprApplies).toBe(true);
+        expect(privacyData.gpp).toBe('gpp-string');
+        expect(privacyData.gppSid).toBe('6');
         done();
       });
     });

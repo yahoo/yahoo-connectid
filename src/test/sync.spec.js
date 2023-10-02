@@ -36,6 +36,7 @@ describe('sync', () => {
         he: MOCK_HASH_EMAIL,
         v: 1,
         url: 'http://localhost:9876/context.html',
+        gpp_sid: '-1',
       }, jasmine.anything());
     });
 
@@ -89,11 +90,12 @@ describe('sync', () => {
         '1p': true,
         v: 1,
         url: 'http://localhost:9876/context.html',
+        gpp_sid: '-1',
       }, jasmine.anything());
     });
 
     it('should pass privacy signals to api', () => {
-      mockPrivacySignals(false, '1---', true, true);
+      mockPrivacySignals(false, 'gpp-string', ['6'], true, '1---', true);
       spyOn(api, 'sendRequest');
       sync.syncIds({
         pixelId: 12345,
@@ -101,6 +103,8 @@ describe('sync', () => {
       });
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
         he: MOCK_HASH_EMAIL,
+        gpp: 'gpp-string',
+        gpp_sid: '6',
         gdpr: true,
         gdpr_consent: MOCK_GDPR_TCSTRING,
         us_privacy: '1---',
