@@ -35,7 +35,7 @@ describe('sync', () => {
       expect(api.sendRequest).toHaveBeenCalledWith('https://ups.analytics.yahoo.com/ups/12345/fed', {
         he: MOCK_HASH_EMAIL,
         v: 1,
-        url: 'http://localhost:9876/context.html',
+        url: 'http://mydev.aol.com:9876/context.html',
         gpp_sid: '-1',
       }, jasmine.anything());
     });
@@ -76,6 +76,22 @@ describe('sync', () => {
       });
     });
 
+    it('should call api if on O&O domain and referrer is from different domain', done => {
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify({
+        he: MOCK_HASH_EMAIL,
+        connectId: 'abc_connectId',
+        lastSynced: Date.now(),
+      }));
+
+      spyOn(api, 'sendRequest');
+
+      Object.defineProperty(document, 'referrer', { value: 'https://www.yahoo.com/', configurable: true });
+      connectId.getIds({pixelId: 123, email: MOCK_HASH_EMAIL}, () => {
+        expect(api.sendRequest).toHaveBeenCalled();
+        done();
+      });
+    });
+
     it('should pass parameters to api', () => {
       spyOn(api, 'sendRequest');
       sync.syncIds({
@@ -89,7 +105,7 @@ describe('sync', () => {
         puid: MOCK_HASH_PUID,
         '1p': true,
         v: 1,
-        url: 'http://localhost:9876/context.html',
+        url: 'http://mydev.aol.com:9876/context.html',
         gpp_sid: '-1',
       }, jasmine.anything());
     });
@@ -109,7 +125,7 @@ describe('sync', () => {
         gdpr_consent: MOCK_GDPR_TCSTRING,
         us_privacy: '1---',
         v: 1,
-        url: 'http://localhost:9876/context.html',
+        url: 'http://mydev.aol.com:9876/context.html',
       }, jasmine.anything());
     });
 
