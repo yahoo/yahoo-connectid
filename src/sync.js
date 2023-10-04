@@ -41,7 +41,7 @@ const shouldIgnoreTTL = () => {
   try {
     const previousETLDP1 = getEtldPlus1(document.referrer);
     const currentETLDP1 = getEtldPlus1(window.location.hostname);
-    return !!previousETLDP1 && (previousETLDP1 !== currentETLDP1) && O_AND_O_DOMAINS.indexOf(currentETLDP1) > -1;
+    return !!previousETLDP1 && (previousETLDP1 !== currentETLDP1) && O_AND_O_DOMAINS.indexOf(previousETLDP1) > -1;
   } catch (ignore) {
     return false;
   }
