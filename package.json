@@ -1,6 +1,6 @@
 {
   "name": "@yahoo/yahoo-connectid",
-  "version": "4.4.1",
+  "version": "4.4.2",
   "description": "Sync hashed emails to a Yahoo ConnectID and other user identifiers",
   "main": "index.js",
   "scripts": {

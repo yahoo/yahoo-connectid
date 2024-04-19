@@ -18,7 +18,7 @@ const setCookie = (value) => {
   const maxAge = 365 * 24 * 60 * 60;
   let domain;
   try {
-    domain = window.location.hostname.match(/[\w]+\.([\w]+|co.uk)$/)[0];
+    domain = window.location.hostname.match(/[\w-]+\.([\w]+|co.uk)$/)[0];
   } catch (e) {
     // ignore
   }
