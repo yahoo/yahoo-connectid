@@ -40,7 +40,7 @@ describe('state', () => {
   });
 
   describe('setLocalData', () => {
-    it('should store state for specified user', () => {
+    it('should store state for specified user in local storage', () => {
       const mockState = {
         connectId: 'def_connectId',
         he: 'def',
@@ -53,6 +53,22 @@ describe('state', () => {
 
       state.setLocalData(mockState);
       expect(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY))).toEqual(expectedStoredValue);
+    });
+
+    it('should store state for specified user in cookie', () => {
+      const mockState = {
+        connectId: 'def_connectId',
+        he: 'def',
+      };
+      const expectedStoredValue = {
+        he: 'def',
+        connectId: 'def_connectId',
+      };
+      const cookieSpy = spyOnProperty(document, 'cookie', 'set');
+      spyOn(document, 'cookie')
+      state.setLocalData(mockState);
+      const expectedValue = 'connectId={"connectId":"def_connectId","he":"def"};Max-Age=31536000;Domain=aol.com;path=/;Secure;SameSite=None';
+      expect(cookieSpy).toHaveBeenCalledWith(expectedValue);
     });
 
     it('should not throw an exception if invalid state is provided', () => {
